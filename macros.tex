@@ -1,0 +1,92 @@
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{lineno}
+\usepackage{multirow}
+%\usepackage{array}
+\usepackage{setspace}
+\usepackage[]{algorithm2e}
+\usepackage{amsopn}
+%\usepackage{named}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+
+\newcommand{\shortcite}[1]{\cite{#1}}
+
+%% revision
+\definecolor{commentcol}{rgb}{.7,.2,.2}
+\definecolor{colorneedswork}{rgb}{.2,.5,.2}
+\definecolor{darkgray}{rgb}{.35,.35,.4}
+\definecolor{gray}{rgb}{.5,.5,.5}
+\definecolor{newversioncol}{rgb}{.4,.2,.6}
+
+%% code blocks
+\definecolor{algCommentCol}{rgb}{.2,.3,.7}
+
+
+\newcommand{\ignore}[1]{}
+
+\newcommand{\todo}[1]{{\color{commentcol} {\bf Todo: } #1}}
+\newcommand{\docomment}[1]{{\color{commentcol} #1}}
+\newcommand{\xxx}{{\color{commentcol}{\textbf{xxx}}}}
+
+
+\newcommand{\nver}[1]{{\color{newversioncol}{#1}}}
+\newcommand{\michael}[1]{{\color{commentcol}{#1}}}
+\newcommand{\han}[1]{{\color{commentcol} [Han: #1]}}
+\newcommand{\niloy}[1]{{\color{commentcol} [Niloy: #1]}}
+
+
+
+%% basic math
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\reals}{\ensuremath{\mathbb{R}}}
+
+%\newcommand{\argmax}[1]{\underset{#1}{\operatorname{argmax}}}
+%\newcommand{\argmin}[1]{\underset{#1}{\operatorname{argmin}}}
+
+\newcommand{\bv}[1]{\mathbf{#1}}
+\newcommand{\vecx}{\mathbf{x}}
+\newcommand{\vecy}{\mathbf{y}}
+\newcommand{\vecz}{\mathbf{z}}
+\newcommand{\vecu}{\mathbf{u}}
+\newcommand{\vecv}{\mathbf{v}}
+\newcommand{\vecs}{\mathbf{s}}
+\newcommand{\vect}{\mathbf{t}}
+
+\newcommand{\prob}{\operatorname{Pr}}
+
+\newcommand{\transf}{\mathbf{T}}
+\newcommand{\rot}{\mathbf{R}}
+
+
+%% notation
+\newcommand{\inputGeo}{\mathcal{S}}
+\newcommand{\resultGeo}{\mathcal{S}'}
+
+%\newcommand{\tile}{t}
+\newcommand{\numTiles}{{n}}
+%\newcommand{\tileTypes}{\mathcal{T}}
+\newcommand{\numTileTypes}{N}
+\newcommand{\typeIndex}{\tau}
+%\newcommand{\surfTilingFun}{{f_t}}
+%\newcommand{\tileTypeFun}{{f_t}}
+\newcommand{\shapeGraph}{G}
+\newcommand{\graphNodes}{V}
+\newcommand{\graphEdges}{E}
+
+\newcommand{\partType}{\tau}
+\newcommand{\numPartTypes}{{\#\tau}}
+
+\newcommand{\dualGraph}{G^*}
+\newcommand{\dualNodes}{V^*}
+\newcommand{\dualEdges}{E^*}
+\newcommand{\dummyEdges}{dE^*}
+\newcommand{\cut}{C}
+
+\newcommand{\itemnudege}{\vspace{-.05in}}
+\newcommand{\eqnbreak}{\par\vspace{-1.5\baselineskip}}
+\newcommand{\mypara}[1]{\noindent{\textbf{#1.}}}
+\newcommand{\vnudge}{\vspace{-.2in}}

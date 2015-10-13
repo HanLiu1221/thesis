@@ -1,0 +1,298 @@
+6
+% shapeGraph paper
+
+\chapter{Replaceable substructures for efficient part based modeling}
+\label{chapter4}
+
+Instead of working on a 2D graph problem (2.5D for multi-floor layout optimization) in the previous chapter, we extend the graph operation to the 3D space. In this chapter, we introduce such operation applying to part-based shape synthesis. Part-based modeling typically starts by segmenting the input geometry into disjoint parts. These are later instantiated, transformed, and reassembled to create shape variations. The various approaches~\cite{MitraSTAR2013} in literature mainly differ in how the segmentation is performed and the applied transformations and constraints.
+
+\section{Shape graph representation}
+
+Graph representation is commonly used in analyzing man-made objects, abstracting a given model by connecting shape parts (nodes). The connections between parts are usually associated with geometric features such as symmetry, or functional constraints such as support. In our work, we intuitively build a shape graph according to the topological relations between parts.
+
+\subsection{Abstracting shape graphs}
+
+We abstract an input model $M$ by a purely topological description, a \emph{shape graph} $\shapeGraph := (\graphNodes,\graphEdges)$ that encodes shape parts as nodes connected by edges to capture the coarse-scale model topology. Unlike previous approaches~\cite{wang_eg11,topoVarying14} assigning featured edges like symmetry, we study the intrinsic relations between parts without additional constraints.
+
+\subsection{Parts and docking sites}
+
+\paragraph{Parts} An input geometry is pre-segmented into a finite number of disjoint and connected regions that we call \emph{parts}. Parts are the nodes $\graphNodes$ in our shape graph. Importantly, each part $v \in \graphNodes$ has an associated \emph{type} $\partType(v)$, as shown in \ref{fig:annotation}(a).
+A shape graph usually contains many parts that share the same type (e.g., a car has four wheels).
+A part can be associated with a geometric property like rigid copies~\cite{Bokeloh2010} or a semantic property based on functionality.
+We assume that such segmentation and annotation are given. In our interactive annotation setup, we provide a simple tool to ``color'' pre-segmented mesh parts to indicate matching part types. As for pre-segmentation, we allow group and un-group selected shape parts so that the user can define the segmentation.
+
+\paragraph{Docking sites} Parts are connected to each other through \emph{docking sites} linked by graph edges $\graphEdges$, implying that a graph edge connects two docking sites. As an important consistency condition, we demand that \emph{parts of the same type must have the same configuration of docking sites}. Each docking site on a part type specifies a list of type-compatible docking sites on other parts to connect to.
+
+\begin{figure}
+	\centering
+		\includegraphics[width=0.65\columnwidth]{images/chapter_4/figure/annotation.png}\\
+		\small (a) Annotated example data. \\
+		\begin{tabular}{cc}
+		\includegraphics[width=0.50\columnwidth]{images/chapter_4/figure/grammar-parts-new.png} &
+		\includegraphics[width=0.20\columnwidth]{images/chapter_4/figure/grammar-rules-new.png} \\		
+		\small (b) Learned part types. &
+		\small (c) Learned docking rules.\\
+		\end{tabular}
+	\caption{A simple example for learning docking rules. (a) The original input data is annotated with parts and docking sites. (b) This yields parts of different types and (c) rules for connecting them, visualized as a compatibility matrix.}
+	\label{fig:annotation}
+\vnudge
+\end{figure}
+
+\subsection{Shape grammars}
+
+Shape grammars are a natural formalism for encoding local consistency constraints in part-based modeling. In our rule system, the parts are the terminals, the docking sites are non-terminals, and the rules require non-terminals to match for valid assembly. The rules are established by the intrinsic connections between parts. In addition, we also allow users to define the shape grammar by defining suitable connector parts, by coloring the boundary region as parts of the same types makes them connectible.
+In practice, we build a hash table storing the connection rules. With progressive insertion of new shapes, the shape grammar is adapted accordingly.
+
+\section{Discovering matching subgraphs}
+
+In this section, we analyze the complexity of subgraph matching, and then present an efficient algorithm for finding locally consistent assemblies of parts. Afterwards, we make it asymptotically efficient by avoiding redundancy and imposing local consistent constraints. Finally, we make the algorithm more concise and practically faster by operating on the dual $G^*$  of graph $G$ (Figure~\ref{fig:dual_graph}).
+
+\begin{figure}[t!]
+  \includegraphics[width=\columnwidth]{./images/chapter_4/dual_graph/dual_graph.pdf}
+  \caption{From a shape $M$ with annotated part types (indicated by colors) we construct a shape graph $G$ where each part becomes a node and each part-connection an edge. The dual graph $\dualGraph$ encodes how a set of parts can be removed to extract a subgraph. In this example~(bottom-left), the cut is formed by removing two nodes from the dual graph $\dualGraph$.
+  }\label{fig:dual_graph}
+\end{figure}
+
+\subsection{Graph operations}
+
+Rather than synthesizing graphs from scratch, we restrict our consideration to \emph{modifications} of existing graphs. Here, the input example provides a starting point to not only learn the rules, but also learn how to assemble the shape graphs.
+
+\mypara{Graph operations} We find pairs of two different subgraphs that can be replaced with each other. In other words, \emph{replaceable subgraphs} are characterized as pairs of corresponding cuts that still respect all of the learned rules when the interior of one is exchanged with the interior of another. We call the resultant operations \emph{(grammar-consistent) graph operations}.
+
+
+\mypara{Fast search for graph operations} A na\"{\i}ve search for replaceable subgraphs still has exponential runtime costs.
+Specifically, symmetry in this set of cuts that leads to an artificial, exponential blow-up of possible variations. By factoring these symmetries out, along with local ordering assumption, we design an algorithm to enumerate all the possible graph modification operations in polynomial time. Specifically, for graphs of $n$ nodes, $m$ edges, and maximum node degree $k \in \mathcal{O}(1)$, there will be no more than $\mathcal{O}(k \cdot n^2)=\mathcal{O}(n^2)$ \emph{different} operations. The cut pairs leading to different operations can be directly enumerated and each can be computed in linear, $\mathcal{O}(n+m)$ time, yielding a cubic worst-case bound for bounded $k$. A simple hashing argument reduces this further to $\mathcal{O}(k \cdot n \cdot (n+m)) = \mathcal{O}(n^2)$, i.e., quadratic time.
+
+\mypara{Dual graph algorithm} The search algorithm can be more conveniently formulated using dual shape graphs. The asymptotic complexity then changes only slightly to $\mathcal{O}(k \cdot m^2)$ trials of $\mathcal{O}(k \cdot m)$ costs. For $k \in \mathcal{O}(1)$, we also obtain a worst-case cubic bound. However, the practical performance is better due to early termination of the step that extracts operations in worst-case linear time.
+
+\subsection{Search complexity analysis}
+
+The key problem is to build a whole consistently connected graph that describes a synthesized shape while abiding by the observed grammar rules. In this section, we analyze the complexity implications arising from local consistency constraints.
+
+\mypara{Complexity of locally consistent synthesis}
+How difficult is this? Unlike context-free shape grammars~\cite{StinyGibs71,Mueller2006}, tiling grammars specify only local constraints on how pieces can be glued together, thus permitting context-sensitive rules. While traditional, context free grammars permit efficient algorithms for sampling valid scene variations~\cite{Bokeloh2010}, the additional expressiveness of a tiling grammar comes at a price: Related problems have been studied extensively in theoretical computer science \cite{Reghizzi2003}, and a number of negative results are known.
+
+Rule systems with parts and local connection rules can have arbitrarily complex behavior.
+As an well-known example, Penrose tilings create globally aperiodic patterns in the 2D plane with as few as two simple polygons as tile types and carefully chose connection rules. In general, tiling grammars have been shown to be Turing-capable, even in very restrictive settings (e.g., Wang tiling~\cite{Cohen2003}, consisting just of multiple rigid squares with edges marked in different ``colors'' for compatibility~\cite{Berger1966}.
+Being able to encode any Turing computation, tiling grammars fall under Rice's theorem \cite{HopcroftUllman79}, which implies that any non-trivial property of the grammar becomes undecidable, including just finding a single, closed, consistent graph. % (solving the emptiness problem of the associated formal language).
+The problem becomes decidable if we permit only a finite number of tiles to be used, but even this restricted variant is NP-hard~\cite{Demaine2007}.
+%Please note that
+Our 3D tiling grammar is able to express the 2D tilings as special cases, and the same restrictions apply.
+
+
+\mypara{Proposed fast search}
+While the idea of using matching cuts is straightforward, it still has a serious complexity problem. There are two main challenges: First, the number of matching pairs of cuts can be exponential and thus cannot be enumerated na\"{\i}vely. Second, general subgraph matching itself is NP-hard.
+
+Even with very simple graphs, we might obtain an exponentially large number of matching cut pairs. Consider for example a 2D grid of squares where all four sides can be mutually connected (see Figure~\ref{fig:ambiguous}). In each subfigure,
+%(\ref{fig:ambiguous}a-c)
+a pair of matching cuts and substructures are represented by different colors (red and green); each pair have the same shape of boundaries in the grid example, so swapping them does not result in any change. Rather than enumerating all the matching cuts, we create equivalence classes of cuts that have the same effect on the graph and enumerate only one representative from each class.
+
+\begin{figure}[t!]
+	\centering
+	\includegraphics[width=0.3\columnwidth]{images/chapter_4/figure/ambiguous1.png}
+	\hspace{2mm}
+	\includegraphics[width=0.3\columnwidth]{images/chapter_4/figure/ambiguous2.png}
+	\hspace{2mm}
+	\includegraphics[width=0.3\columnwidth]{images/chapter_4/figure/ambiguous4.png}	
+	\caption{Even simple graphs (here: regular grid of identical parts) can have an exponential number of matching cuts. However, due to symmetry, all but an $\mathcal{O}(k \cdot n^2)$-sized subset have the same effect.}
+	\label{fig:ambiguous}
+\end{figure}
+
+\mypara{Equivalent operations} The counter-example also gives a hint on how to avoid redundancy. Given an operation that replaces $S$ by $S'$, we can convert it into an equivalent operation by including additional pairs of nodes along the boundary of $S$ and $S'$ (to be replaced with each other) that \emph{both have the same type}. Leaving out such a matching node pair or not does not affect the result. We designate a \emph{normalized,} representative graph operation out of the whole equivalence class by just leaving out all of such ineffective replacements.
+
+
+\mypara{Partial graph symmetry} The normalization above can be understood by looking at partial symmetries of the graph: A \emph{partial graph symmetry} is node-wise matching between two subgraphs, matching (i)~only nodes of the same type, and (ii)~preserving the graph topology within  matched regions.
+
+
+We can characterize all graph operations as the complement of all maximal partial symmetries (with respect to set inclusion): We enumerate all partial graph matchings (always with the maximal sets of nodes matched), and obtain the shape operations as pairs of cuts along the boundaries towards the unmatchable regions (including boundaries).
+%
+% and shape operations \michael{are obtained as the various different} boundaries of matched region. % (the replaceable subgraphs are exactly those graph parts that cannot be matched).
+These cut-out regions are always replaceable because the connections between the nodes along the cut have, by definition, been observed in the exemplar geometry. This also holds for iterated application of shape operations, as this makes grammar consistency an invariant of the process.
+
+\mypara{Dual graph}
+We consider the dual $G^*$ of the shape graph $G$, i.e., the edges in $G$ form the nodes in $G^*$ and vice versa (Figure~\ref{fig:dual_graph}). We match pairs of nodes in $G^*$ (i.e., edges of $G$) if they are compatible with respect to the shape grammar. We simply walk along a path in the dual graph that contains only matching edges (Figure~\ref{fig:dualGraphMatch}). The usage of dual graph will be further explained in~\ref{sec:dualGraphCutting}.
+
+\subsection{Matching subgraph}
+
+The above method still requires solving the subgraph matching problem, which is NP-hard in general.
+We make a small restriction and introduce a \emph{local ordering constraint}. First, we consider manifold inputs, where the ordering constraint is implicitly given by the manifold structure and graph matching is always a polynomial problem.
+
+
+\mypara{Manifold training data}
+We only allow  matches that preserve {\em ordering} of the docking sites. The ordering is trivially induced by manifold data: Recall that parts on a surface (a triangle mesh) a obtained by segmentation into disjoint, connected regions. On a manifold surface, each part boundary can only be neighboring at most two parts. Hence, docking sites are simple curve segments along the part boundaries, and the boundary curve of a cut is a simple curve, consisting of one connected component without intersection (see Figure~\ref{fig:graphReplace1}). In this case, the ordering is prescribed by the ordering along the boundary curve, and similar to planar graphs, maximal subgraph matching can be efficiently performed.
+
+\begin{figure}[h!]
+	\centering
+	\begin{tabular}{ccc}
+		\includegraphics[width=0.27\columnwidth]{images/chapter_4/lastMinute/graphReplace1.png} &
+		\includegraphics[width=0.27\columnwidth]{images/chapter_4/lastMinute/graphReplace2.png} &
+		\includegraphics[width=0.27\columnwidth]{images/chapter_4/lastMinute/graphReplace3.png} \\
+		\small (a) subgraph match &
+		\small (b) remove $S$ &
+		\small (c) insert $S'$
+	\end{tabular}
+	\caption{Graph operations modify existing shape graphs by replacing matching subgraphs iteratively.}
+\vnudge
+	\label{fig:graphReplace1}
+\end{figure}
+
+
+\mypara{Complexity manifold graph matching}
+We start by picking a pair of matching nodes of the same type. There are at most $\mathcal{O}(n^2)$ such pairs, $n$ denoting the number of nodes. For each such pick, we fix a permissible correspondence between two docking sites, i.e., the ``rotation'' and ``translation'' of the match. There are at most $k \ll n$ such options with $k$ being the maximum degree of nodes in $\shapeGraph$, see Figure~\ref{fig:graphMatchDOF}. This choice uniquely determines the maximal subset that can be matched: We just perform region growing into adjacent nodes as connected by their docking sites. If the node types are the same, the pair can be included in the match $(S,f(S))$ and this cannot interfere with other choices. If it does not match or if we encounter a node that has already been matched previously, we can stop region growing. Overall, we obtain at most $\mathcal{O}(n^2 \cdot k)$ matching pairs of cuts, each of which can be computed in $\mathcal{O}(n+m)$ time with $m$ edges in the graph. This yields a third order worst-case bound assuming $k = \mathcal{O}(1)$.
+
+\begin{figure}[t!]
+	\centering
+		\includegraphics[width=0.72\columnwidth]{images/chapter_4/lastMinute/graphMatchDOF.png}
+	\caption{A partial graph symmetry is fixed by one node and one edge assignment.}
+	\label{fig:graphMatchDOF}
+\vnudge
+\end{figure}
+
+The worst-case estimate is still too pessimistic. With a small modification, we obtain a theoretical \emph{quadratic} bound by using the fact that at most $\mathcal{O}(k)=\mathcal{O}(1)$ overlapping, distinct matches because overlapping maximal partial symmetries must differ in their ``rotation'' of the docking sites against each other. Otherwise, they would be identical. Hence, we use a simple hash table to avoid rematching subgraphs multiple times that have different starting pairs of nodes. Then the linear matching costs cannot be accumulated more than $\mathcal{O}(n \cdot k)$-times. This reduces the worst-case compute time to $\mathcal{O}(n \cdot k \cdot (m+n)) = \mathcal{O}(n^2)$. In practice, large scale matches are rather unlikely, such that we might even often expect linear scaling behavior, permitting interactive applications.
+
+\mypara{Non-manifold data}
+In practice, we want to utilize our method on general triangle soup, as real-world shape repositories rarely offer clean manifold meshes. In this case, we make a small adaptation. The key assumption that leads to polynomial matching costs is the fixed ordering of the outgoing edges. % (which follows in particular from manifold geometry).
+ Hence, we impose a pseudo-manifold ordering for general meshes, as explained next.
+
+For each part in the graph, we consider all directly connected parts. We compute the centroids of all of these and determine a least-squares fitting plane using a local PCA analysis. The outgoing edges (vectors between centroids) are then ordered by projecting them into the plane and ordering the projected edges by increasing angle. A manifold-like structure can then be created like the dual graph in Figure~\ref{fig:dualGraphMatch} where dual nodes are obtained by such local ordering and dual edges simulates the traversal of half edges. The initial orientation of the plane is uniquely determined during matching such that the incoming edge, the plane normal, and the next edge %(which determines the order)
+form a right-handed coordinate system. % (requiring a left-handed orientation leads to the same match, as both source and target flip).
+
+\begin{figure}
+	\centering
+	\begin{tabular}{cc}
+		\includegraphics[width=0.44\columnwidth]{images/chapter_4/lastMinute/dualGraphMatch1.png} &
+		\includegraphics[width=0.44\columnwidth]{images/chapter_4/lastMinute/dualGraphMatch2.png} \\
+		\small (a) dual graph &
+		\small (b) dual graph cutting
+	\end{tabular}
+	\caption{Manifold-like data is created by ordering docking sites (see Figure~\ref{fig:graphReplace1}). In a dual graph, matching cuts is performed by node propagation.}
+	\label{fig:dualGraphMatch}
+\vnudge
+\end{figure}
+
+
+\mypara{Simultaneous dual graph cutting}
+\label{sec:dualGraphCutting}
+With the previous definition of dual graph, we compute the matching cuts directly using the dual graph $G^*$ of the shape graph. The dual-domain algorithm is faster in practice as it avoids explicitly detecting symmetry through flood-filling but only walks along boundaries. Further, we can easily extend it to make it robust to small grammatical defects.
+
+Further, we avoid mismatching dual nodes. Dual nodes are trivially matched if they connect the same types of nodes in the original graph $G$. We enumerate all the cuts by starting an exhaustive depth-first search at each pair of dual nodes that can be non-trivially matched. Enumerating these cuts is equivalent to finding the boundaries of partial symmetry in the primal graph algorithm and therefore the same worst-case complexity bounds hold. %In practice, as the approach avoids visiting symmetric areas explicitly, we obtain faster search times.
+
+Exact matching can fail in practice due to imperfect input, e.g., inconsistent annotation, imprecise segmentation, small shape variations. In particular, we have observed in our experiments that the ordering of non-manifold graphs using PCA-based tangent-plane projection is not always reliable. We therefore permit limited violations of the ordering by introducing \emph{dummy edges} that cover sparse outliers. We add a potential dummy edge to the dual graph between all nodes with a graph distance of two (nodes with distance one directly connected), irrespective of grammatical constraints, thereby short-cutting over local defects. We minimize the number of violations by exhaustively searching graphs with up to $q \in \{0,1,2,3 \dots\}$ violations. This search is exponential in $q$. In our experiments, we used $q\le 2$.
+
+\section{Transforming replaceable substructures}
+
+In this section, we present how to use the graph representation and matching subgraphs to synthesize new models, as well as a method to embed concrete geometry from synthesized shape graph variations.
+
+\subsection{Synthesis modes}
+
+There are two types of shape synthesis, in-model and in-group synthesis. The former perform the subgraph search and replace iteratively in an input model, and the latter finds replaceable substructures between different models from a family of shapes.
+
+\mypara{In-model synthesis}
+
+For models with partial repetitive structures like playgrounds, racetracks, and ball tracks, replaceable subgraphs can be explored in just a single model. Hence, we progressively replace substructures from a source model. Figure~\ref{fig:results_plate} presents three kinds of models: castle, playground, and race track. As the replacement of two matching subgraphs is bilateral, therefore, we can either choose to use a large subgraph to replace a smaller one or viceversa. This leads to interesting variations as shown by the inflated and the deflated playground model.
+
+\begin{figure*}[t!]
+	\centering
+		\includegraphics[width=\textwidth]{images/chapter_4/newResults/castle_playground_racetrack.pdf}
+		\caption{Starting from single castle, playground, racetrack models, matching subgraphs are progressively found and replaced.}
+\label{fig:results_plate}
+\vnudge
+\end{figure*}
+
+\begin{figure}
+\vnudge
+	\centering
+		\includegraphics[width=.6\linewidth]{images/chapter_4/results/trackingball.pdf}
+		\caption{Starting  ball track models, replaceable subgraphs result in plausible synthesis results.}
+	\label{fig:results_trackingball}
+\end{figure}
+
+
+\begin{figure*}[t!]
+	\centering
+		\includegraphics[width=.95\linewidth]{images/chapter_4/results/bike_tractor.pdf}
+		\caption{Synthesized bikes created from only 3 bike models, with 13, 15, and 16 parts, respectively. We show two graphs and associated highlight matching cuts/subgraphs on the right of each synthesized bike, the subgraph in the upper graph get replaced by the matching subgraph in the lower one. The synthesized results of toy tractors were created from 4 input models. }
+	\label{fig:results_bikes}
+\vnudge
+\end{figure*}
+
+\mypara{In-group model synthesis}
+Matching subgraphs can also be discovered and swapped between different models.
+In Figure~\ref{fig:results_trackingball}, starting  from two source models, the synthesized models are inserted as new inputs for further variation.
+
+We obtain a variety of plausible shapes with varied topologies as well as geometries, as illustrated by the synthesized bike models in Figure~\ref{fig:results_bikes}, such as the two-seats tricycle resulted from replacing a subgraph from the tandem to the tricycle while preserving the geometry of the tricycle. The geometry can also be replaced along with the subgraph. We keep the non trivial results, i.e., those with topological and geometric changes from source models, while filtering out the trivial ones. Note that some of the cuts cannot be formed by only using the adjacent edge propagation from the shape graph. Here, dummy edges are used (maximum length 2) to expand the solution space, at the cost of slightly increasing the computational time.
+
+
+\subsection{Geometric assembly}
+
+The method described above provides us with the information of which substructure can be replaced by which other. This section describes the subsequent geometrical replacements of those substructures, enabling the actual generation of new objects.
+
+Let's consider a pair of graphs $\{G^1, G^2\}$ along with their respective replaceable subgraphs $\{s_1,s_2\} \in \mathcal{G}$.
+Both subgraphs are characterized by their frontiers $ C_1 \subset E^1$ and $ C_2 \subset E^2$, which are replaceable cuts of $G^1$ and $G^2$ respectively.
+To each graph $G^i$ corresponds a shape $S^i$, and to each node $ n_j^i \in V^i$ corresponds a part $P_j^i \in S^i$.
+
+Let's call $M_i$ the substructure composed of the parts corresponding to the nodes of $s_i$.
+We propose here a method for finding a transformation $\mathcal{T}$ such that $\mathcal{T}(M_1)$ fits into $S^2 \ M_2$ (see figure~\ref{fig:mapping}). Note that we can then easily obtain the inverse ($\mathcal{T}^{-1}(M_2)$ fits into $S^1 \ M_1$).
+
+
+\begin{figure}[b!]
+	\centering
+		\includegraphics[width=.8\linewidth]{images/chapter_4/trans_mapping/mapping.png}
+	\caption{Non uniform interpolation weighting across parts and inside parts allows an adapted non-rigid transformation.}
+	\label{fig:mapping}
+\end{figure}
+
+Each edge $e$ of $G^1$ and $G^2$ can be characterized by an orthonormal frame in the 3D space, which represent the position and the orientation of the connection between parts corresponding to the nodes connected by $e$. Given that each edge of $C_1$ has a corresponding edge in $C_2$, we can form pairs of frames which define rigid transformations on the boundaries of $M_1$ and $M_2$. We then define $\mathcal{T}$ as an interpolation of those transformations.
+
+\mypara{Frame positioning.} First of all we need to position a frame for each edge of $C_1$ and $C_2$. For a given edge $e$, we consider the two parts $P_1$ and $P_2$ which correspond to the nodes that $e$ is connecting. $P_1$ is set such that it's corresponding node belongs to the subgraph. The frame is positioned according to the bounding boxes of $P_1$ and $P_2$: it's origin is the center of the intersection of the two bounding boxes, the $x$ axis is set to point toward the center of $P_2$, and the rotation is set such that the $z$ axis points upward. This \emph{euristic} is rather simple, and results may have to be post-processed by the user.
+
+\mypara{Rigid transformations interpolation.} We now dispose of two sets of frames $\{F_i^1\}$ and $\{F_i^2\}$. We therefore get a set of rigid transformation given by the set of pairs $\{(F_i^1, F_i^2)\}$. $\mathcal{T}$ is defined as a per-vertex linear interpolation of those transformations, resulting in a globally non-rigid transformation.
+
+For each part of $M_1$, we compute a set of interpolation coefficients based on the inverse distance between the center of the part and the origin of the corresponding frame. The user can then choose for each part to be rigidly transformed according to these coefficients (the same interpolation weights are affected to all vertices of the part, resulting in a rigid transformation), or the coefficients to be per-vertex interpolated within the part (resulting in a non-rigid transformation).
+
+\section{Functional validation}
+
+The topological validity of synthesized models are preserved as the match-and-replace process respects the observed connection rules. We extract functional features from example inputs, which facilitates the pruning of invalid synthesis. Then we implement a validity check based on some global constraints.
+
+\subsection{Extracted features}
+
+\begin{figure*}[t!]
+	\centering
+		\includegraphics[width=.9\linewidth]{images/chapter_4/functionality/functionality.png}\\
+	\caption{Functionality. (a) shape part C supports B; (b) A ball track model has an entry and an exit, and layers can be counted starting from ground touching nodes; (c) B and C share the common axis $S_2$. }
+	\label{fig:functionality}
+\end{figure*}
+
+Connections between shape parts encode certain functionalities designed to serve static use (chairs, table) or motorial purpose (bike, ball track). Let $V_i$, $V_j$ denote the $i$th and $j$th shape part, $e_{ij}$ the edge between them, we extract the following features on edges: support, accessibility, coaxial and layer.
+
+\mypara{Support} Due to the assumption of up-right orientation for man-made objects, supporting is associated with the edges that connect to a ground touching node. For instance, $V_i$ represents a chair leg while $V_j$ the chair seat, then the direction of $e_{ij}$ is pointed from $V_i$ to $V_j$. As the aim is to create functional valid shapes, here support also implies stability. Consider that $V_j$ is supported by a set of parts (e.g., chair legs) $\{V_{i1}, ... V_{ik}\}$, all of which can be abstracted by a single bounding box whose bottom face is viewed as the local ground. In Figure~\ref{fig:functionality}($a$), $C_1, C_2, C_3$, and $C_4$ constitute $C$ that supports $B$. Such support is stable if the projection of mass center of $V_j$ on the ground lies inside the convex hull of ground touching vertices of $\{V_{it}, t = 1,..k\}$, then we group these parts as a single node $V_i$. We also classify ground touching support and non-ground touching support.
+
+\mypara{Accessibility} Architectural models have entry, route and exit for people to walk through, as well as some toys like ball track (Figure~\ref{fig:functionality}($b$)) allowing balls to enter and pass through it till an exit is met. If there is an entry ($V_s$) in a model, then there is at least one exit ($V_t$) to ensure the accessibility. The direction of edges associated with ($V_s$) always points from $V_s$, while the one with $V_t$ points to $V_t$. Note that a node can be associated with both entry and exit functions. With semantic labels, we can check the validity of two matching subgraphs (A, B) if the following stands:
+
+$!(|V_{s_A}| + |V_{s_B}| > 0\ \&\&\ |V_{s_A}| + |V_{s_B}| == 0)\ \&\&\ !(|V_{t_A}| + |V_{t_B}| > 0\ \&\&\ |V_{t_A}| + |V_{t_B}| == 0)$.
+
+
+\mypara{Coaxial} Vehicles are powered to move by wheels. To enable synchronized move, two wheels have to be either coaxial, or their axes ($S_1, S_2$) have to be parallel, and the connecting line of the centers of $S_1$ and $S_2$ has to be perpendicular to $S_1, S_2$, see Figure~\ref{fig:functionality}($c$).
+
+\mypara{Level} In the example of playground and ball track, a layer can be attached to each node and edge is a powerful constraint, so as to get a more efficient search of matching cuts. Consider a pair of matching boundaries from two ball track models, unmatched heights will result in invalid synthesis. The layer can be calculated starting from a ground touching node (layer $=$ 1), increased by 1 for its supported node, and iterate until the top node.
+
+\subsection{Geometric validation}
+
+We verify global constraints after the embedding step, thereby permitting the algorithm to avoid constraint violations. We support the following simple constraints.
+
+\noindent \textbf{Support constraint} ensures that the structure is well grounded (see Figure~\ref{fig:results_trackingball}). We detect the horizontal support relation between neighboring nodes by fitting a plane to their contact area and check whether the normal is parallel to the upright vector. Then, the heights of nodes can be calculated starting from ground touching nodes, as well as the edges. We compare the height difference between two consecutive edges in matching cuts, and filter the failure cases, i.e., a lifted ground touching node, or a tilted substructure.
+
+\noindent \textbf{Path constraint} ensures that connected paths exist from every entry to at least one exit, and are traversable under gravity (see Figure~\ref{fig:results_trackingball}). We verify it in two steps: First, we compute a path by traversing the graph and then reject examples that do not have any path from an entry to exits. Second, we check whether the path is geometrically monotonically decreasing in height. At this point, the embedding can still be modified by non-uniform resizing of the parts thereby changing the heights. We perform greedy resizing along the path and reject the whole graph operation if no valid solution is found (see Figure~\ref{fig:geometric_constraints}).
+
+
+\begin{figure}[h!]
+	\centering
+		\includegraphics[width=\linewidth]{images/chapter_4/newResults/correction.pdf}
+		\caption{Synthesized models, if found to be geometrically invalid, can be corrected by adapting the model parts
+		subject to the geometric constraints. In this example, the exit part is anisotropically rescaled to allow it to be properly grounded. }
+\label{fig:geometric_constraints}
+\end{figure}
+
+
+\noindent \textbf{Other constraints} can also be supported. For example, we check orientation by comparing the angle between two consecutive edges in two matching cuts, to avoid distortion in geometry assembly, e.g., two parallel nodes will not be replaced by two perpendicular nodes. This could be modeled by more complex local rules, but a global validation is easier and efficient in pruning invalid results.
+

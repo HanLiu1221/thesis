@@ -1,0 +1,169 @@
+
+% related work file
+
+\chapter{Related Work}
+\label{relatedWork}
+
+Creating shape variations has been studied over the past years, especially for man-made objects. A recent survey of structure-aware shape processing \cite{MitraSTAR2013} gives a broad overview of techniques designed for man-made objects. Graph is widely used in analyzing shape structures as well as synthesizing new models. The advantage is to create valid models that conform to the design guidelines instead of creating from scratch. A graph usually abstracts geometric features or functionalities by assigning extracted attributes on graph nodes or edges. Sometimes users are required to specify the expected feature or define functionalities. In this work, we try to generalize the concept of shape graph that only relies on intrinsic connections.
+
+In recent years, a trend of sketch-based modeling provides a more natural interface for users to create models by interpreting concept sketches. Previous design tools analyze strokes and extract features like curvature and cross-sectional lines. Unlike enforcing such external factors, we introduce a sketch based system that extracts 3D canvases from 2D sketches in a descriptive space.
+
+\section{Part-based Modeling}
+
+Motivated by the availability of 3D model collections, the interactive modeling-by-example framework ~\cite{Funkhouser2004} pioneered in combining parts from various models retrieved from a shape database to synthesize new models. As the growing popularity of available model collections online, creative part-based model synthesis eases the manual work especially for creating models with near regular structures such as buildings(facades) and furniture.
+
+\subsection{Semantic shape parts}
+
+In modeling-by-example ~\cite{Funkhouser2004}, users were expected to assist in the tasks of establishing semantic part correspondence, placement of potential candidate parts, and/or geometric adaptation of the parts. Various refinements have subsequently been proposed. For example, Kraevoy et al.\cite{Kraevoy2007} uses contact-graphs to determine interchangeable part candidates, \cite{Shin2007,Lee2008} use 2D sketches to assist in part retrieval, \cite{Sharf:2006:SIT} uses geometric snapping to create plausible part connections, while \cite{Chaudhuri2010} employs geometric matching to retrieve components for ill-defined shapes. Semi-automatic annotation or co-segmentation is proposed, for example, the ShapeAnnotator framework ~\cite{attene:09} provides an intuitive interface to help the users annotation, while the SmartVariation system ~\cite{Zheng:2013} retrieves part correspondence through functional analysis without labeling.
+
+In another approach, \cite{merrell2008continuous} poses the part-based model synthesis problem as an instance of MRF labeling. However, they work under the assumption that node of graphs already exists and the task is to determine suitable labels, under neighborhood constraints. The approach was later extended to handle global constraints~\cite{talton2012learning,yeh2013synthesis}. In contrast, our method synthesizes the domain of the labeling function of the MRF itself, which is a harder problem. Previous methods fix the domain of the MRF by an a priori discretization of space into fixed cells. This constraints geometric variability to subsets of regular spatial subdivisions, while our graph-modification approach breaks this restriction.
+
+\subsection{Exploiting shape grammars}
+
+Shape grammars \cite{stiny1980introduction} are a way to produce geometric shapes with abstracted shape rules.
+%
+Facade modeling best explains the rule-based approaches, usually in the form of (inverse) procedural modeling. One option is to detect and exploit partial symmetry to automatically find rules for procedural modeling that guarantee local consistency.
+%
+Wonka et al.~\cite{wonka2003instant} provides a matching system using split grammars to synthesize buildings with varying styles. Late researchers have explored auto-correlation based analysis of rectified images combined with shape grammars towards urban reconstruction ~\cite{muller2007image}.
+%
+Teboul et al. \cite{teboul2010segmentation} perform supervised learning using shape grammar priors to interpret building facades using random walks on the learned models. The method has been extended using recursive binary split grammar and reinforcement learning \cite{teboul2011shape} to parse facades into element level masks (e.g., windows, doors) using training information.
+
+For 3D object synthesis, Bokeloh et al.~\cite{Bokeloh2010} detect $r$-symmetric geometry as \emph{docking sites} and replace the differing parts with each other. This creates locally consistent shape variations in the sense that every neighborhood of radius $r$ on the newly created shape is a rigid copy of some portion of example data. Later, a generalization, slippable dockers~\cite{Bokeloh2011}, provide an option for pattern-aware free-form shape editing.
+%
+Kalojanov et al.~\cite{Kalojanov2012} consider all boundaries of partial $r$-symmetry simultaneously to span the space of all locally similar shapes.
+%
+More recently, for continuous geometry synthesis, \cite{Dekkers2014} propose geometry seam carving to to duplicate self-similar details on a shape.
+
+Rule systems of this type can be interpreted as formal language with a specific, context-sensitive use of non-terminals: The parts are the terminals, the docking sites are non-terminals, and the rules require non-terminals to match for valid assembly. We call this formalism tiling grammars (restricted 2D variants have previously been described as ¡°tiling systems¡± and ¡°tile rewriting grammars¡±~\cite{Reghizzi2003}). Tiling grammars are a natural formalism for encoding local consistency constraints in part-based modeling.
+
+
+\section{Constraint-aware model synthesis}
+
+Generating plausible shapes often requires proper definitions of constraints, to ensure that shape structures are preserved following design motivations, such as (partial) symmetry and realistic functionalities especially for man-made objects. Since part-base modeling provides an explicit way to composite shape parts, an intuitive thought is to validate the generated models afterwards. A more efficient method is incorporating such constraints in the procedure of shape analysis or/and synthesis.
+
+\subsection{Regular patterns}
+\label{regularPattern}
+
+Building facade synthesis ~\cite{wonka2003instant}~\cite{alsisan2012variation} usually starts from searching regular part arrangements in order to create new facades representing similar patterns to the input shapes. For example, Zheng et al. \cite{zheng2010non} use model scale repetitions to create a consolidated point cloud, and Ceylan et al. \cite{ceylan2012factored} propose a 2D-3D coupled optimization using symmetric line arrangements towards accurate 3D reconstructions.
+
+More recently, AlHalawani et al.~\cite{alhalawani2013interactive} propose an interactive system to detect repetition patterns to facilitate shape editing, while Dai et al.~\cite{dai2013example} allow irregular patterns by parsing the input image into semantic parts.
+
+In researches on synthesizing 3D man-made objects, Wang et al.~\cite{Wang2011} construct a symmetry hierarchy that supports structure-aware editing by changing the symmetry parameters while holding the part-level topology fixed. Xu et al.~\cite{xu_sig12} propose mixing and matching parts using a genetic algorithm to {\em evolve} novel and interesting shape variations.
+%
+Zheng et al.~\cite{zcm_sfarr_eg13} search for pre-authored part substructures to create functionally plausible novel variations. Such ideas are orthogonal to the tools presented in this paper, and we explore integration of global constraints.
+
+In another thread, Jain et al.~\cite{Jain2012} propose symmetry-structure-guided morphing between shape parts to create shape in-betweens, while more recently skeleton graphs have been used to create interesting and plausible in-between shapes with topological variations~\cite{topoVarying14}. In contrast to blending methods, we focus on part assembly with formal guarantees on local consistency.
+
+However, in this work, we look beyond regular patterns. At an abstract level, we present an algorithm as a generalization of the grammar extraction algorithm of Bokeloh et al.~\cite{Bokeloh2010}. There are three key improvements:
+First, our method is not restricted to rigid pieces. We take a topological point of view, permitting corresponding parts to vary strongly in geometry.
+Second, our dynamic subgraph replacement permits, when iterated, more general topological variations than iterated applications of rules from precomputed context-free shape grammars. Third, we introduce global constraints that cannot be captured by the earlier static framework.
+%The unconstrained part-assembly model of Kalojanov et al.~\cite{Kalojanov2012} did not provide a synthesis algorithm.
+%%Our paper explains why such an approach is intractable and proposes a practical alternative by constraining the problem suitably.
+
+\subsection{Design constraints}
+
+As indicated in the beginning of this section, plausible shape variations need to conform to the users' design intentions. In this section, we take interior layout as an example to introduce how user factors are reflected in both the analysis and synthesis stages.
+%
+Architectural floor plan design has been widely studied in the context of automatic space planning. Layout design was initially treated as packing problem and categorized as slicing and non-slicing structures \cite{dasgupta2001slicible,preas1979placement}. In an early research by Harada et al. \cite{harada1995interactive} divides the constraints of floorplan design into topological and geometric constraints.
+
+
+\subsubsection{Topological constraint}
+
+Interior layout design amounts to arranging input rooms in a given {\em envelope} or approximate space area under scale and connectivity constraints. Topological design objectives specify the locations of spaces as well as the relational spaces distribution, e.g., denoting room sizes and relations, respectively~\cite{arvin2002modeling}.
+
+As the dimension of rooms can be prescribed, while other preferences like presence of isolated wall to avoid corners can arise due to affordance considerations. There can also be accessibility considerations, for example, a bathroom is preferably attached to the main bedroom; the dining room should be next to the kitchen, etc. Further, as a sanity measure, all the rooms should be accessible by connected paths from the main door. In case of multi-storied buildings, there are additional constraints, e.g., the position and the dimensions of stairs have to match across the different floors. Interestingly, a large number of such constraints are applicable to both virtual scenes and real physical setups.
+%
+A graph representation \cite{harada1995interactive,arvin2002modeling,merrell2010computer} can illustrate topological constraints of shape parts and assist the evaluation in the creation of new models, i.e., floor plan generation and 3D object synthesis.
+
+\subsubsection{Geometric constraint}
+
+Automatic generation of interior layouts has been studied recently based on user specified requirements such as expected room area and connectivity among the rooms (c.f., \cite{merrell2010computer}).
+In a general setup, the user first indicates such global functional specifications by prescribing approximate area of each room and a connectivity graph indicating desired inter-room connections. Subsequently, the system returns realizations conforming to the input constraints.
+%
+Even when such a layout satisfies all the predefined conditions, users may still want to fine tune the design, such as change room areas or swap pairs of rooms. More importantly, being oblivious to the final construction, the user designed floor plan may be ill-suited to the actual manufacturing process, and thus be expensive. Hence, besides ensuring functional floor plan when the user manipulates any suggested design, we specifically optimize the geometric realization to produce economic constructions. Thus, both functional and fabrication constraints are directly accounted for in our proposed interactive design setup (details will be specified in chapter \ref{chapter3:PrecastLayout}).
+
+In model synthesis, geometric constraints can be further classified as:
+{\em Local constraints} enforce geometric plausibility at a local level, i.e., all small, local neighborhoods of the synthesized shapes must look plausible, regardless of the overall shape.
+Data driven methods usually formulate this as geometric similarity of all local neighborhoods to portions of the example data. In the context of part-based modeling, this constrains  the connections between parts, as exemplified in the input.
+
+Local consistency is necessary but not sufficient, i.e., out of locally plausibly connected pieces, one can build composite shapes with unsuitable global structures.
+This is addressed by \emph{global constraints}, which describe non-local correlations in part usage in order to further narrow down the space of synthesized shapes to a plausible subset. Both geometric approaches (e.g., \cite{Wang2011}) as well as machine-learning methods (e.g., \cite{Fisher2012}) are employed to this end.
+
+\subsection{Shape synthesis}
+
+Shapes can be synthesized by (i) inferring building rules directly from an input model, and (ii) using the grammar to synthesize new variations.
+In this work, we discuss specific shape synthesis in floor plan generation and man-made object synthesis, and further introduce user-driven reshaping with human guidelines, i.e., ergonomic constraints.
+
+\subsubsection{Automated floor plan generation}
+
+Typical approaches of layout generation include using tree and graph structures to search over possible configurations of slicing floor plans \cite{marson2010automatic,medjdoub2001dynamic,otten1982automatic,zhou2004acg}; or employing branch-and-bound to place a number of blocks inside a given layout envelope \cite{preas1979placement}. In other contexts, non-slicing floor plans are evolved from circuit layout problem to minimize chip areas \cite{guo1999tree,jiang2009layout,pan1995area}. More recently, layout design has been extended to simplify indoor furniture placement \cite{merrell2011interactive}.
+
+Most approaches search over possible placements in a design space. Galle et al. \cite{galle1981algorithm} implemented an exhaustive algorithm to select the rectangular arrangements satisfying constraints among all the possible generations. However, due to computational restrictions, the method could only handle layouts with up to ten rooms. Wong et al. \cite{wong1986new} searched feasible solutions by simulated annealing. Alternately, physically based modeling \cite{arvin2002modeling,harada1995interactive} has been introduced to simulate rooms as mechanical elements whose motions are manipulated by forces defined between inter-room spacing. Arvin et al.~\cite{arvin2002modeling} summarize geometric and topological objectives to search space planning solutions, e.g., alignment, area, and proportion objectives.
+
+Evolutionary algorithms have been applied to search layout possibilities by treating design variants via cross-overs and mutations operators \cite{elezkurtaj2002algorithmic,michalek2002architectural,schneider2011rethinking}. In these approaches, evolutionary strategy is used to fit rooms into target envelopes, while improving appropriately designed fitness functions. Further, mutations are allowed during such evolution, for example to switch rooms (crossover) in order to optimize connectivity~\cite{knecht2010generating}. Such problems, however, are not well suited to handle objectives and constraints.
+Recently, an automated layout generation has been proposed to sample and efficiently explore the layout search space~\cite{merrell2010computer}. The method, however, is not designed to support interactive design refinements.
+
+In a related attempt, Harada et al. \cite{harada1995interactive} design a system that allows users to interactively drag rooms, but the possible layouts are pre-defined. Specifically, the algorithm searches for a matched state that best reflects user intents from a set of constructed transformations for mapping states. Further, only limited sets of constraints are considered, and the method does not generalize to handle manufacturing constraints.
+%
+More recently, physical and manufacturing considerations have also been explored in the context of geometric form finding~\cite{Umetani2012}.
+%
+Similarly, we integrate the users in the design process by supporting direct manipulation of the floor plan, followed by a constrained optimization under room layout and construction guidelines. The optimization, based on abstracted proxy geometry, proceeds by updating the layouts responding to user interactions including pulling walls forward or backward, and swapping rooms. More importantly, we focus on pre-cast concrete based constructions and consider its implications in design and layout problems. Therefore, the layouts are adjusted to make them more amenable to subsequent construction considerations. Specifically, new constraints will be introduced due to construction cost, e.g., casting walls with certain types of precast concretes to minimize cutting of pre-fabricated concrete slabs.
+
+
+\subsubsection{Man-made object synthesis}
+
+Shape synthesis aim to simplify the modeling process of man-made objects with interchangeable parts\cite{zheng2014recurring} as well as replacement rules, so that any novice user can easily create detailed objects. Interchangeable parts are found by computing part correspondences using geometry matching.
+
+Geometric matching can be performed in either a single object revealing repetitive patterns \cite{Bokeloh2010,merrell2008continuous} or a collection of models having partial resemblances \cite{Ovsjanikov11,Kim12,yumer2012co,zheng2014recurring}.
+%
+For the former kind,
+\cite{Chaudhuri2010} enables component retrieval for ill-defined shapes based on geometry matching. \cite{Chaudhuri2011,Kalogerakis2012} improve the parts identification by using a probabilistic model incorporating geometric style and semantics to select relevant components and to automate plausible synthesis. Bokeloh et al.\cite{Bokeloh2011} preserves detected regular patterns during deformation using sliding docking sites, leading to the expansion of the shape space. The ShapeSynth system \cite{averkiou2014shapesynth} extracts a template-based parameterizable space and presents an exploration tool allowing users preview synthesized shapes based on the embedding.
+%
+For the latter kind,
+Kim et al. \cite{Kim12} proposes to compute similarities between shapes using fuzzy correspondence, while Huang et al. \cite{Huang12} match shapes by computing point-to-point maps between a pair of models. But it is difficult to directly apply either of the analytic methods to shape synthesis. Kalogerakis \cite{Kalogerakis12} presents a probabilistic model abstracting model structure based on which create new shapes with structure variabilities. More recently, Zheng et al. \cite{zheng2014recurring} detects recurring arrangements of parts using semantic consistency.
+
+\subsubsection{User-driven reshaping}
+
+Reshaping has been a long-standing research topic in geometry processing \cite{DeformationSurvey:2008} as shape deformation. Existing shape deformation methods mainly fall into two classes: one class of methods aim to preserve the shape local properties such as curvatures, local coordinates, etc., \cite{Sorkine:2004,Lipman:2005:LRC,Lipman:2008:GC}, while the other class of methods aim to preserve global structures such as symmetry, inter-part relations \cite{Kraevoy:2008,Gal2009,ZFDOT10,Bokeloh2011}.
+%
+Li et al.~\cite{Li_siga12}, in an interesting work, deforms input man-made objects to make them amendable to stacking.
+
+The ergonomics-driven reshaping system [?] takes human factor into consideration by linking ergonomics considerations to shape reshaping with the goal to facilitate personal customization. Specifically, the summarized guidelines are commonly suggested across the different works ~\cite{book84,book88,chairGlove:92}. Take a chair for example, chair seats should have correct height to allow both feet to be fully supported; width and depth of chair seats should conform to the users dimensions; flat uncontoured seats are preferred to discourage a slouched or C-shaped posture; lumbar support by providing low- or mid-back support can help hold good posture and prevent pain to the spine and neck.; head support, if provided, can help ease stress for the neck muscles and provide support for seating over extended periods; arm rests provide support for reading, typing, painting, and similar activities.
+
+The reshaping is formulated as an optimization process and design an edit propagation algorithm to deform the shape w.r.t. these constraints in the regards that the shape structure is preserved. When the skeleton pose and attributes are modified, the contact constraints continue to induce new edits to the shape. This allows the user to interactively design new shapes for a human with particular characteristics.
+
+\section{Sketch based modeling}
+
+Creating models from scratch requires a lot of time and training for novice users, even with simplified exploration tools. A recent trend is towards a more natural way, i.e., sketch-based modeling, usually referring to mapping a 2D sketch to a 3D model (see \cite{Olsen:2009:TSS} for a survey of earlier works). Humans can fairly easily infer 3D forms from 2D sketches alone and researchers have long attempted to mimic the same algorithmically. Possibly the most famous system is the Teddy \cite{Igarashi:1999}, which lifts sketch lines to 3D as the user draw.
+%
+The CrossShade system \cite{SBSS12} lifts artistic cross-shade lines to 3D models by mathematically linking cross-sectional curves to model geometry, while Shao et al. \cite{slzxgm_conceptSketch_sigg13} proposed a system to interpret concept sketches to effective visualization of product designs with functional parts. More recently, the True2Form system \cite{Xu:2014:True2Form} demonstrates how to mathematically model perception and design knowledge to create 3D forms from 2D sketch.
+
+Contrast to recognizing a sketch from scratch, a more popular design takes shape within an existing spatial context by sketching atop a visual anchor, such as a photograph, a site plan, or even on Google SketchUp rigs of acquired data (c.f., check streetscape improvements by Jim Leggitt, or other artists' works in the collection~\cite{sketchBook:11}). We review work in such kind of designs that is most closely related to ours.
+
+\subsection{Sketch in context}
+
+Previous tools were created to support sketch in context either by trying to fuse geometrically inconsistent strokes, or requiring multi-modal acquisition of the surroundings to act as scaffolds for subsequent design. The 3D6B Editor \cite{3D6b} produces 3D sketches from user input 2D sketch and user-definable drawing canvases. Mental Canvas~\cite{mentalCanvas07} provides a sketch tool that allow users sketch freely in 3D by manipulating strokes between user-defined canvases. The InSitu system~\cite{Insitu:SIGA11} combined information from multi-modal inputs to create rough 3D popups to assist users to sketch in context of the created popups. While powerful, the approach still requires access to the physical site to gather 3D information, which is often difficult and may not even yet exist. Instead, we investigate how rough 3D contextual information can be directly recovered simply based on a single background image or sketch. 
+
+Similarly, in product design, scaffold-guided design is common practice and has recently been computationally supported~\cite{schmidt2009analytic}. While these approaches can support expressive designs, the setup phase is cumbersome and discourages easy and efficient exploration.
+%
+Alternatively, one can first create user-assisted scene reconstruction from a single photo~\cite{Sinha:2008:IAM}, or build a 3D model on top of a photo~\cite{Lau:2010:MUD}, but as we demonstrate, this is not necessary.
+%
+In this work, we show that inferring context from photographs and sketches can be seamlessly integrated into the design process by a background optimization that maps the problem as the selection and refinement of embedding planes by using existing context.
+
+More recently, Saul et al.~\cite{Saul:2010:SAC} introduced a specialized sketching system for creating chairs, Oztireli et al.~\cite{Oztireli113D} exploited symmetric curves to simplify 3D modeling, the Sketch2Design system~\cite{sketch2design13} adapted and combined parts from 3D model collections based on user strokes for 3D modeling, while the PushPull++~\cite{Lipp:2014:PUS} introduced dynamic modeling tools to vastly simplify common modeling tasks.
+Shtof et al.~\cite{Shtof:2013:GSS} introduced a powerful constraint-based sketch modeling system, while exploiting inter-curve geo-semantic relations, while \cite{Sadri:2014:FSR} proposed a flow-complex based shape reconstruction algorithm from a network of 3D curves.
+%%%
+%Our goal is also to facilitate simple, single-view sketch-based designing, but by exploiting the existing context to lift the sketches to 3D curves and surfaces. We also allow the user to {\em pull} content from different sources (e.g., photographs or sketches) in order to create a collage-like setting, which is another common design practice for designers.
+
+
+\subsection{Scene reconstruction}
+
+A classic scene reconstruction problem computes 3D information from multiple-camera images~\cite{kolmogorov2002multi}. Other image-based approaches such as~\cite{MuseumCSG12,Karsch:SA:2014} use multi-view stereo reconstruction ro register 3D models to photographs. When specific scene priors are available (e.g., Manhattan frame, symmetric facade, etc.), reconstruction can also be performed even from single images~\cite{Criminisi:2000:SVM,Jiang:2009:SAM,Xiao:2009}. Scanning based techniques are usually used for surface reconstruction or completion~\cite{reconstar_eg14}.
+The scanning and reconstruction algorithms provide avenues to accurately capture our surroundings, which can then be used to anchor design sketches.
+
+%
+Decoret et al.~\cite{billboard:03} extracted a collection of billboards to simplify 3D models, while the PhotoPopup system~\cite{Hoiem:2005:APP} used a learning approach to lift single images to photo popups.
+In the case of interactive applications, the user can also provide cues to help represent objects in the scene as cuboids~\cite{zcczhm_interactiveImages_sigg12} or generalized cylinders~\cite{chen2013}.
+
+Our goal is not reconstruction, however, but rather to create an abstraction of the scene that can then provide {\em context} for subsequent design. To this end, we take the user strokes on the existing photograph to create a scene abstraction. Note that the user can decide selectively which objects to extract, rather than having to reconstruct the entire scene. We also allow the user to {\em pull} content from different sources (e.g., photographs or sketches) in order to create a collage-like setting, which is another common design practice for designers.
+

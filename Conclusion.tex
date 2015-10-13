@@ -1,0 +1,39 @@
+
+% Conclusion File
+
+\chapter{Conclusion}
+\label{chapter:conclusion}
+
+In this thesis, we introduce supporting designs with three main instantiations. To conclude, we review the key contributions of our work in section \ref{sec:summary}. In section \ref{sec:future}, we describe the limitations and several directions for future work.
+
+\section{Summary}
+\label{sec:summary}
+
+We present computational methods to explore the layout of models that are mainly applicable to man-made structure and scenes. By analyzing the composition of shapes, we provide tools to assist users in creating new models interactively. We introduce design tools for building layout, producing shape variations, and abstracting 3D scenes from user sketches.
+
+\mypara{Interior layout design} Given input design constraints, we create initial room layouts to support further edits. Users are allowed to change the room space by sliding the walls or swapping rooms. The updated layout may violate design criteria such as irregular room shapes and blocked walking paths. Hence, we recalculate the layout by an optimization according with user preferences. Furthermore, a fabrication aware reshaping is performed to facilitate the real construction of buildings. Specifically, we work on precast concrete based constructions with the goal to minimize the number of necessary cutting of the concrete slabs. Designers can provide a few types of slab molds with different sizes. In our implementation, the reshaping does not cause toplogical changes to the layouts, but slight adjustments of walls to find the optimal usage of slabs with the least number of cutting.
+
+
+\mypara{Replaceable substructure exploration}
+%
+Replaceable substructures refer to pairs of matching shape parts that can be switched thereby creating new models. Through tracing edges that belong to the same type in shape graphs, we circle out a pair of region that have matching boundaries and therefore are replaceable. Our approach circumvents the undecidable problem of unconstrained instantiation of tiling grammars by restricting operations to replacements of contiguous subgraphs at a time. In practice, the ordering constraints at boundaries avoids the exponential costs of subgraph isomorphism. As we exploits global constraints, i.e., connectivity, the search space are further narrowed down for efficient modeling.
+
+Beside theoretical characterization of the problem, a key contribution is a polynomial time algorithm to compute all possible replacements of subgraphs. For graphs with $n$ nodes, $m$ edges, and maximum degree $k$, we obtain at most $\mathcal{O}(n^2 \cdot k) = \mathcal{O}(n^2)$ complexity computed in worst-case $\mathcal{O}(k \cdot n \cdot (n+m)) = \mathcal{O}(n^2)$ time. The algorithm operates on dual shape graphs to simplify the discovery of consistent replaceable subgraphs that can then be geometrically realized in an deformation inducing embedding. Additionally, the proposed dummy edges enables model variations for imperfect inputs. We used the algorithm to create non-trivial and semantically plausible models with significant topological and geometric variations at a scale not previously demonstrated (involving hundreds of nodes, instead of tens of nodes, in order of a few seconds).
+
+\mypara{Sketching based design}
+%
+We introduce a sketching interface that dynamically interprets 2D sketches of man-made environments by abstracting the strokes using arrangements of canvas planes. The extracted canvases effectively lift the 2D sketches to 3D, and thus allow novel preview possibilities to artists at design time to assist them in adapting and developing ideas. Unlike previous methods that require uses to specify the drawing canvas \cite{ilovesketch08, Insitu:SIGA11}, our approach automatically computes hosting planes for strokes. For each compound stroke, we sort the candidate planes according to the aligning probability to the vanishing directions. Besides, canvas arrangements for neighboring strokes are considered to ensure a consistent structure.
+
+In our sketching system, users have the freedom to modify the current configuration, e.g., erasing strokes, grouping coplanar strokes, and updating the connectors. As even proficient draw strokes with wrong perspective for either artistic consideration or incorrect approximation, our system present the back end analysis to users. Through simply clicking and dragging, users can help reduce the ambiguity. The sketching is progressively since the user can stop at any time to view the 3D forms of her sketching and continues drawing. We keep the previous arrangements of determined canvases, including which for further computation of newly inserted strokes. Such schema introduce more accurate candidate planes for strokes based on existed 3D information. We validate the system by a pilot user study.
+
+
+\section{Future work}
+\label{sec:future}
+
+Our work can be extended in the direction of combing particular design and sketching more tightly. Our system already supports sketching building layout by generating a rough 3D structure. Other specific constraints like construction cost is not included since it will introduce deformation as shown in chapter \ref{chapter3}. At this stage, however, we try to avoid any modification that affects user drawings so as to present user sketches accurately from different viewpoints. But it is interesting to append additional requirements to the system serving specific design purpose. For example, line segments with measurements can be added to facilitate building or furniture design, further, the background image can be replaced by a 3D scanning scene for more accurate modeling.
+
+Shape synthesis by sketching can be implemented with a data-driven approach. It will be helpful to associate a sketched object to a given model, e.g., the user can trace the contours in an image to obtain an object. Meanwhile the system acquires the mapping information of shape segments, and semantic information can bind. By applying model synthesis like the replaceable substructure method in chapter \ref{chapter4}, such reusable components enable the user to create a shape library enclosing her or his own sketchy styles.
+
+We provide a few assisting tools like snapping strokes to straight lines or even perspective aligned lines. The user can also copy and paste 3D strokes to save repetitive drawings. Interestingly, from user feedback, the fitting tool is preferred as it presents an accurate perspective. In this work, we relied on backdrop photographs to perform initial camera calibration. However, this assumption prevents us from handling multi-perspective sketches. In the future, we can let the user specify multiple perspective in their sketches. Especially for professional users, they can define multiple views by simply placing cubes indicating local orientations on the canvas. This function can be inherited from sketching the non-axis objects in chapter \ref{chapter5}.
+
+In this thesis, we primarily work on man-made objects and scenes with near regular structure, including buildings, furniture, and toy models. An interesting next step is to support freeform structures for more creative design. The current system can be extended in the way that designers can not only sketch planar curves, but also surfaces with some existing techniques like surface fitting or mesh deformation.
