@@ -23,3 +23,5 @@ images/
 *.gls
 *.ist
 *.ps
+backup_1013_workstation/
+*.gz
