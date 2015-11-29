@@ -1,4 +1,3 @@
-6
 % shapeGraph paper
 
 \chapter{Replaceable substructures for efficient part based modeling}
@@ -16,12 +15,12 @@ We abstract an input model $M$ by a purely topological description, a \emph{shap
 
 \subsection{Parts and docking sites}
 
-\paragraph{Parts} An input geometry is pre-segmented into a finite number of disjoint and connected regions that we call \emph{parts}. Parts are the nodes $\graphNodes$ in our shape graph. Importantly, each part $v \in \graphNodes$ has an associated \emph{type} $\partType(v)$, as shown in \ref{fig:annotation}(a).
+\mypara{Parts} An input geometry is pre-segmented into a finite number of disjoint and connected regions that we call \emph{parts}. Parts are the nodes $\graphNodes$ in our shape graph. Importantly, each part $v \in \graphNodes$ has an associated \emph{type} $\partType(v)$, as shown in \ref{fig:annotation}(a).
 A shape graph usually contains many parts that share the same type (e.g., a car has four wheels).
 A part can be associated with a geometric property like rigid copies~\cite{Bokeloh2010} or a semantic property based on functionality.
 We assume that such segmentation and annotation are given. In our interactive annotation setup, we provide a simple tool to ``color'' pre-segmented mesh parts to indicate matching part types. As for pre-segmentation, we allow group and un-group selected shape parts so that the user can define the segmentation.
 
-\paragraph{Docking sites} Parts are connected to each other through \emph{docking sites} linked by graph edges $\graphEdges$, implying that a graph edge connects two docking sites. As an important consistency condition, we demand that \emph{parts of the same type must have the same configuration of docking sites}. Each docking site on a part type specifies a list of type-compatible docking sites on other parts to connect to.
+\mypara{Docking sites} Parts are connected to each other through \emph{docking sites} linked by graph edges $\graphEdges$, implying that a graph edge connects two docking sites. As an important consistency condition, we demand that \emph{parts of the same type must have the same configuration of docking sites}. Each docking site on a part type specifies a list of type-compatible docking sites on other parts to connect to.
 
 \begin{figure}
 	\centering
@@ -33,9 +32,9 @@ We assume that such segmentation and annotation are given. In our interactive an
 		\small (b) Learned part types. &
 		\small (c) Learned docking rules.\\
 		\end{tabular}
-	\caption{A simple example for learning docking rules. (a) The original input data is annotated with parts and docking sites. (b) This yields parts of different types and (c) rules for connecting them, visualized as a compatibility matrix.}
+	\caption[A simple example for learning docking rules. ]{A simple example for learning docking rules. (a) The original input data is annotated with parts and docking sites. (b) This yields parts of different types and (c) rules for connecting them, visualized as a compatibility matrix.}
 	\label{fig:annotation}
-\vnudge
+%\vnudge
 \end{figure}
 
 \subsection{Shape grammars}
@@ -49,8 +48,9 @@ In this section, we analyze the complexity of subgraph matching, and then presen
 
 \begin{figure}[t!]
   \includegraphics[width=\columnwidth]{./images/chapter_4/dual_graph/dual_graph.pdf}
-  \caption{From a shape $M$ with annotated part types (indicated by colors) we construct a shape graph $G$ where each part becomes a node and each part-connection an edge. The dual graph $\dualGraph$ encodes how a set of parts can be removed to extract a subgraph. In this example~(bottom-left), the cut is formed by removing two nodes from the dual graph $\dualGraph$.
-  }\label{fig:dual_graph}
+  \caption[Shape graph and dual shape graph.]{From a shape $M$ with annotated part types (indicated by colors) we construct a shape graph $G$ where each part becomes a node and each part-connection an edge. The dual graph $\dualGraph$ encodes how a set of parts can be removed to extract a subgraph. In this example~(bottom-left), the cut is formed by removing two nodes from the dual graph $\dualGraph$.
+  }
+  \label{fig:dual_graph}
 \end{figure}
 
 \subsection{Graph operations}
@@ -94,7 +94,7 @@ a pair of matching cuts and substructures are represented by different colors (r
 	\includegraphics[width=0.3\columnwidth]{images/chapter_4/figure/ambiguous2.png}
 	\hspace{2mm}
 	\includegraphics[width=0.3\columnwidth]{images/chapter_4/figure/ambiguous4.png}	
-	\caption{Even simple graphs (here: regular grid of identical parts) can have an exponential number of matching cuts. However, due to symmetry, all but an $\mathcal{O}(k \cdot n^2)$-sized subset have the same effect.}
+	\caption[The matching cuts on a simple 2D grid.]{Even simple graphs (here: regular grid of identical parts) can have an exponential number of matching cuts. However, due to symmetry, all but an $\mathcal{O}(k \cdot n^2)$-sized subset have the same effect.}
 	\label{fig:ambiguous}
 \end{figure}
 
@@ -131,8 +131,8 @@ We only allow  matches that preserve {\em ordering} of the docking sites. The or
 		\small (b) remove $S$ &
 		\small (c) insert $S'$
 	\end{tabular}
-	\caption{Graph operations modify existing shape graphs by replacing matching subgraphs iteratively.}
-\vnudge
+	\caption[Graph operations.]{Graph operations modify existing shape graphs by replacing matching subgraphs iteratively.}
+%\vnudge
 	\label{fig:graphReplace1}
 \end{figure}
 
@@ -143,9 +143,9 @@ We start by picking a pair of matching nodes of the same type. There are at most
 \begin{figure}[t!]
 	\centering
 		\includegraphics[width=0.72\columnwidth]{images/chapter_4/lastMinute/graphMatchDOF.png}
-	\caption{A partial graph symmetry is fixed by one node and one edge assignment.}
+	\caption[Partial graph symmetry.]{A partial graph symmetry is fixed by one node and one edge assignment.}
 	\label{fig:graphMatchDOF}
-\vnudge
+%\vnudge
 \end{figure}
 
 The worst-case estimate is still too pessimistic. With a small modification, we obtain a theoretical \emph{quadratic} bound by using the fact that at most $\mathcal{O}(k)=\mathcal{O}(1)$ overlapping, distinct matches because overlapping maximal partial symmetries must differ in their ``rotation'' of the docking sites against each other. Otherwise, they would be identical. Hence, we use a simple hash table to avoid rematching subgraphs multiple times that have different starting pairs of nodes. Then the linear matching costs cannot be accumulated more than $\mathcal{O}(n \cdot k)$-times. This reduces the worst-case compute time to $\mathcal{O}(n \cdot k \cdot (m+n)) = \mathcal{O}(n^2)$. In practice, large scale matches are rather unlikely, such that we might even often expect linear scaling behavior, permitting interactive applications.
@@ -165,9 +165,9 @@ form a right-handed coordinate system. % (requiring a left-handed orientation le
 		\small (a) dual graph &
 		\small (b) dual graph cutting
 	\end{tabular}
-	\caption{Manifold-like data is created by ordering docking sites (see Figure~\ref{fig:graphReplace1}). In a dual graph, matching cuts is performed by node propagation.}
+	\caption[Dual graph matching.]{Manifold-like data is created by ordering docking sites (see Figure~\ref{fig:graphReplace1}). In a dual graph, matching cuts is performed by node propagation.}
 	\label{fig:dualGraphMatch}
-\vnudge
+%\vnudge
 \end{figure}
 
 
@@ -188,7 +188,6 @@ In this section, we present how to use the graph representation and matching sub
 There are two types of shape synthesis, in-model and in-group synthesis. The former perform the subgraph search and replace iteratively in an input model, and the latter finds replaceable substructures between different models from a family of shapes.
 
 \mypara{In-model synthesis}
-
 For models with partial repetitive structures like playgrounds, racetracks, and ball tracks, replaceable subgraphs can be explored in just a single model. Hence, we progressively replace substructures from a source model. Figure~\ref{fig:results_plate} presents three kinds of models: castle, playground, and race track. As the replacement of two matching subgraphs is bilateral, therefore, we can either choose to use a large subgraph to replace a smaller one or viceversa. This leads to interesting variations as shown by the inflated and the deflated playground model.
 
 \begin{figure*}[t!]
@@ -196,11 +195,11 @@ For models with partial repetitive structures like playgrounds, racetracks, and 
 		\includegraphics[width=\textwidth]{images/chapter_4/newResults/castle_playground_racetrack.pdf}
 		\caption{Starting from single castle, playground, racetrack models, matching subgraphs are progressively found and replaced.}
 \label{fig:results_plate}
-\vnudge
+%\vnudge
 \end{figure*}
 
 \begin{figure}
-\vnudge
+%\vnudge
 	\centering
 		\includegraphics[width=.6\linewidth]{images/chapter_4/results/trackingball.pdf}
 		\caption{Starting  ball track models, replaceable subgraphs result in plausible synthesis results.}
@@ -211,9 +210,9 @@ For models with partial repetitive structures like playgrounds, racetracks, and 
 \begin{figure*}[t!]
 	\centering
 		\includegraphics[width=.95\linewidth]{images/chapter_4/results/bike_tractor.pdf}
-		\caption{Synthesized bikes created from only 3 bike models, with 13, 15, and 16 parts, respectively. We show two graphs and associated highlight matching cuts/subgraphs on the right of each synthesized bike, the subgraph in the upper graph get replaced by the matching subgraph in the lower one. The synthesized results of toy tractors were created from 4 input models. }
+		\caption[More synthesis examples of bikes and toy tractors.]{Synthesized bikes created from only 3 bike models, with 13, 15, and 16 parts, respectively. We show two graphs and associated highlight matching cuts/subgraphs on the right of each synthesized bike, the subgraph in the upper graph get replaced by the matching subgraph in the lower one. The synthesized results of toy tractors were created from 4 input models. }
 	\label{fig:results_bikes}
-\vnudge
+%\vnudge
 \end{figure*}
 
 \mypara{In-group model synthesis}
@@ -259,7 +258,7 @@ The topological validity of synthesized models are preserved as the match-and-re
 \begin{figure*}[t!]
 	\centering
 		\includegraphics[width=.9\linewidth]{images/chapter_4/functionality/functionality.png}\\
-	\caption{Functionality. (a) shape part C supports B; (b) A ball track model has an entry and an exit, and layers can be counted starting from ground touching nodes; (c) B and C share the common axis $S_2$. }
+	\caption[Functionality.]{Functionality. (a) shape part C supports B; (b) A ball track model has an entry and an exit, and layers can be counted starting from ground touching nodes; (c) B and C share the common axis $S_2$. }
 	\label{fig:functionality}
 \end{figure*}
 
@@ -268,7 +267,6 @@ Connections between shape parts encode certain functionalities designed to serve
 \mypara{Support} Due to the assumption of up-right orientation for man-made objects, supporting is associated with the edges that connect to a ground touching node. For instance, $V_i$ represents a chair leg while $V_j$ the chair seat, then the direction of $e_{ij}$ is pointed from $V_i$ to $V_j$. As the aim is to create functional valid shapes, here support also implies stability. Consider that $V_j$ is supported by a set of parts (e.g., chair legs) $\{V_{i1}, ... V_{ik}\}$, all of which can be abstracted by a single bounding box whose bottom face is viewed as the local ground. In Figure~\ref{fig:functionality}($a$), $C_1, C_2, C_3$, and $C_4$ constitute $C$ that supports $B$. Such support is stable if the projection of mass center of $V_j$ on the ground lies inside the convex hull of ground touching vertices of $\{V_{it}, t = 1,..k\}$, then we group these parts as a single node $V_i$. We also classify ground touching support and non-ground touching support.
 
 \mypara{Accessibility} Architectural models have entry, route and exit for people to walk through, as well as some toys like ball track (Figure~\ref{fig:functionality}($b$)) allowing balls to enter and pass through it till an exit is met. If there is an entry ($V_s$) in a model, then there is at least one exit ($V_t$) to ensure the accessibility. The direction of edges associated with ($V_s$) always points from $V_s$, while the one with $V_t$ points to $V_t$. Note that a node can be associated with both entry and exit functions. With semantic labels, we can check the validity of two matching subgraphs (A, B) if the following stands:
-
 $!(|V_{s_A}| + |V_{s_B}| > 0\ \&\&\ |V_{s_A}| + |V_{s_B}| == 0)\ \&\&\ !(|V_{t_A}| + |V_{t_B}| > 0\ \&\&\ |V_{t_A}| + |V_{t_B}| == 0)$.
 
 
@@ -280,7 +278,7 @@ $!(|V_{s_A}| + |V_{s_B}| > 0\ \&\&\ |V_{s_A}| + |V_{s_B}| == 0)\ \&\&\ !(|V_{t_A
 
 We verify global constraints after the embedding step, thereby permitting the algorithm to avoid constraint violations. We support the following simple constraints.
 
-\noindent \textbf{Support constraint} ensures that the structure is well grounded (see Figure~\ref{fig:results_trackingball}). We detect the horizontal support relation between neighboring nodes by fitting a plane to their contact area and check whether the normal is parallel to the upright vector. Then, the heights of nodes can be calculated starting from ground touching nodes, as well as the edges. We compare the height difference between two consecutive edges in matching cuts, and filter the failure cases, i.e., a lifted ground touching node, or a tilted substructure.
+\noindent \textbf{Support constraint} ensures that the structure is well grounded (see Figure~\ref{fig:results_trackingball}). We detect the horizontal support relation between neighboring nodes by fitting a plane to their contact area and check whether the normal is parallel to the upright vector. Then, the heights of nodes can be calculated starting from ground touching nodes and the edges. We compare the height difference between two consecutive edges in matching cuts, and filter the failure cases, i.e., a lifted ground touching node, or a tilted substructure.
 
 \noindent \textbf{Path constraint} ensures that connected paths exist from every entry to at least one exit, and are traversable under gravity (see Figure~\ref{fig:results_trackingball}). We verify it in two steps: First, we compute a path by traversing the graph and then reject examples that do not have any path from an entry to exits. Second, we check whether the path is geometrically monotonically decreasing in height. At this point, the embedding can still be modified by non-uniform resizing of the parts thereby changing the heights. We perform greedy resizing along the path and reject the whole graph operation if no valid solution is found (see Figure~\ref{fig:geometric_constraints}).
 
@@ -288,7 +286,7 @@ We verify global constraints after the embedding step, thereby permitting the al
 \begin{figure}[h!]
 	\centering
 		\includegraphics[width=\linewidth]{images/chapter_4/newResults/correction.pdf}
-		\caption{Synthesized models, if found to be geometrically invalid, can be corrected by adapting the model parts
+		\caption[Functional correction of models.]{Synthesized models, if found to be geometrically invalid, can be corrected by adapting the model parts
 		subject to the geometric constraints. In this example, the exit part is anisotropically rescaled to allow it to be properly grounded. }
 \label{fig:geometric_constraints}
 \end{figure}

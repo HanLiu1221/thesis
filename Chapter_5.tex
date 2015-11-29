@@ -4,7 +4,7 @@
 \chapter{Context-inferred interpretation of sketches}
 \label{chapter5}
 
-In previous chapters, we introduce the automatic modeling methods for creating man-made objects. However, they are either limited to specific structures like partially repetitive patterns, or requiring user interactions indirectly, i.e., input user requirements at first and evaluate results at last. Hence, we consider a more natural way for people to create models without overload training --- sketching. In the following, we present an interactive system that allows for the creation of a 3D abstraction of a designed space, built primarily by sketching in 2D within the context of an anchoring design or photograph.
+In previous chapters, we introduce the automatic modeling methods for creating man-made objects. However, they are either limited to specific structures like partially repetitive patterns, or requiring user interactions indirectly, i.e., input user requirements at first and evaluate results at last. Hence, we consider a more natural way for people to create models without overload training - sketching. In the following, we present an interactive system (\textsc{SmartCanvas}) that allows for the creation of a 3D abstraction of a designed space, built primarily by sketching in 2D within the context of an anchoring design or photograph.
 
 \section{Oversketching design}
 
@@ -12,9 +12,9 @@ Sketching is the essential tool for the early development of visual ideas, wheth
 modifications. To bridge traditional sketching and 3D modeling, we introduce the way to sketching designs step by step.
 
 \begin{figure}[b!]
-  \vnudge
+  %\vnudge
   \includegraphics[width=\columnwidth]{./images/chapter_5/motivation}
-  \caption{Designers oversketch on photographs~(left) or even SketchUp renderings~(right) to anchor design ideas in the preparatory study stage of design.} \label{fig:motivation}
+  \caption[The motivation of oversketching design.]{Designers oversketch on photographs~(left) or even SketchUp renderings~(right) to anchor design ideas in the preparatory study stage of design.} \label{fig:motivation}
 \end{figure}
 
 \section{Preparing design space for users}
@@ -32,10 +32,10 @@ Given the user annotated user strokes, in the key algorithmic stage, our system 
 
 \begin{figure*}[t!]
   \includegraphics[width=\linewidth]{./images/chapter_5/pipeline/pipeline.pdf}
-  \caption{Starting from a single image, the user annotates vanishing line information~(a). She continues by sketching on top of the image. We estimate the respective vanishing information for each stroke with a set of automatically grouped strokes (different colors) exposed to the user~(b). The user can modify the grouping results, or inter-stroke contact relations, then our system automatically lift a set of 3{D} canvases that host the strokes~(c).  %The user then continues to sketch in a selected view.
+  \caption[Design pipeline.]{Starting from a single image, the user annotates vanishing line information~(a). She continues by sketching on top of the image. We estimate the respective vanishing information for each stroke with a set of automatically grouped strokes (different colors) exposed to the user~(b). The user can modify the grouping results, or inter-stroke contact relations, then our system automatically lift a set of 3{D} canvases that host the strokes~(c).  %The user then continues to sketch in a selected view.
   Our system dynamically infers spatial structure from the user sketches~(d).}
   \label{fig:pipeline}
-  \vnudge
+  %\vnudge
 \end{figure*}
 
 
@@ -45,9 +45,9 @@ We next describe the proposed interface for \textsc{SmartCanvas}. First, using a
 As shown in the Figure \ref{fig:calibration}, the user annotates two sets of parallel line segments to indicate the x- and y-directions. We assume that the focal point lies at the center of the image. The user can adjust the end points of the line segments to align with the respective vanishing directions.
 
 
-\begin{figure}\centering
-  \vnudge
-  \includegraphics[width=0.6\columnwidth]{./images/chapter_5/calibration}
+\begin{figure}[b!]\centering
+  %\vnudge
+  \includegraphics[width=0.6\textwidth]{./images/chapter_5/calibration}
   \caption{Camera calibration.}
   \label{fig:calibration}
 \end{figure}
@@ -81,10 +81,9 @@ Users can intervene at various stages to override erroneous interpretations. In 
 
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{./images/chapter_5/suggestion/suggestion.pdf}
-  \caption{ Our system provides dynamic suggestions as the user continues to sketch. In the left figure, the user sketches are analyzed and grouped with annotations. Our system exposes intermediate canvases arrangements as suggestions and displays them to the user on a right UI panel (middle). The user can then choose the best arrangement which is in accordance with her sketches.
+  \caption[System interface.]{Our system provides dynamic suggestions as the user continues to sketch. In the left figure, the user sketches are analyzed and grouped with annotations. Our system exposes intermediate canvases arrangements as suggestions and displays them to the user on a right UI panel (middle). The user can then choose the best arrangement which is in accordance with her sketches.}
   \label{fig:suggestion}
-  }
-  \vnudge
+  %\vnudge
 \end{figure}
 
 
@@ -96,19 +95,19 @@ We perform this analysis in the background in order not to disturb the user duri
 
 \begin{figure}[b!]
   \includegraphics[width=\linewidth]{./images/chapter_5/grouping/grouping.pdf}
-  \caption{Our auto-coupling algorithm progressively collects and groups the user strokes~(a-d). Once a new stroke is drawn, we detect its vanishing directions, and check its contacts with the existing strokes. We find the most confident coupling group by estimating coplanarity, indicated by different colors. The user can override the automatic suggestion.
+  \caption[Stroke grouping.]{Our auto-coupling algorithm progressively collects and groups the user strokes~(a-d). Once a new stroke is drawn, we detect its vanishing directions, and check its contacts with the existing strokes. We find the most confident coupling group by estimating coplanarity, indicated by different colors. The user can override the automatic suggestion.
   }
   \label{fig:grouping}
-  \vnudge
+  %\vnudge
 \end{figure}
 
 
 The automatic grouping process works fine for simple scenes with limited occlusions. However, if the scene is complicated with sketched curves or with severe occlusion (e.g., Figures~\ref{fig:nonAxis}, \ref{fig:results}), auto-grouping can fail. The user can correct the automatic grouping in the override mode. Specifically, she can select a few strokes, rightclick, and then group the selected strokes. Note that a stroke {\em can} belong to multiple stroke groups. For example, a shared edge between two faces. Once a set of strokes is grouped, we reestimate their candidate canvases using the algorithm described before.
 
 \begin{figure}[b!]
-  \vnudge
+  %\vnudge
   \includegraphics[width=\linewidth]{./images/chapter_5/candidate_planes/nonAxis}
-  \caption{In order to model a non-axis aligned object, we allow users to assign a reference line segment (shown in salmon in the left figure). The reference line assigns new candidate canvases by shifting the existing reference canvases. Together with the axis-aligned objects, we recover the underlying canvases for both objects.
+  \caption[Non-axis aligned objects.]{In order to model a non-axis aligned object, we allow users to assign a reference line segment (shown in salmon in the left figure). The reference line assigns new candidate canvases by shifting the existing reference canvases. Together with the axis-aligned objects, we recover the underlying canvases for both objects.
   \label{fig:nonAxis}}
 \end{figure}
 
@@ -116,23 +115,27 @@ The automatic grouping process works fine for simple scenes with limited occlusi
 
 Central to our interactive framework is getting user approval for the inferred groupings and relations. In this stage, the goal is to get a set of properly anchored inter-stroke relations. In our system, we are particularly interested in three types of relations between pairs of strokes. The user can approve, modify, or assign functional relations.
 
-\emph{(i) Contact.} This relation refers to two stokes sharing a contact point such as the table-leg and the table-top. When such adjacency  relations between two strokes are falsely detected by our automatic algorithm (e.g., due to occlusion), either the two strokes are falsely recognized as adjacent strokes, or their contact location is improperly located (see Figure~\ref{fig:connectors}), the user can delete such a falsely detected relation or reposition the contact. We show the user a set of highlighted cross-marks (see Figure~\ref{fig:connectors}), which we call, \emph{connectors}, to indicate adjacent relations between stroke pairs. Falsely detected adjacent relations are easily overridden by pressing `delete' or dragging the highlighted mark to a new position. To ensure that the strokes form connected component (otherwise 3{D} recovery would be infeasible because of the DOFs), we highlight strokes without any contacts, i.e., isolated strokes to notify the user to redraw.
+%\emph{(i) Contact.}
+\mypara{Contact}
+This relation refers to two stokes sharing a contact point such as the table-leg and the table-top. When such adjacency  relations between two strokes are falsely detected by our automatic algorithm (e.g., due to occlusion), either the two strokes are falsely recognized as adjacent strokes, or their contact location is improperly located (see Figure~\ref{fig:connectors}), the user can delete such a falsely detected relation or reposition the contact. We show the user a set of highlighted cross-marks (see Figure~\ref{fig:connectors}), which we call, \emph{connectors}, to indicate adjacent relations between stroke pairs. Falsely detected adjacent relations are easily overridden by pressing `delete' or dragging the highlighted mark to a new position. To ensure that the strokes form connected component (otherwise 3{D} recovery would be infeasible because of the DOFs), we highlight strokes without any contacts, i.e., isolated strokes to notify the user to redraw.
 
 \begin{figure}[b!]
-  \vnudge
+  %\vnudge
   \includegraphics[width=\linewidth]{./images/chapter_5/connectors/connectors.pdf}
-  \caption{ Contact relations (yellow crosses) are represented as connectors in our system. Occlusions can lead to falsely detected contact relations. For example, in (a), the bottom-left connector between the black-brown strokes is detected at a false position, while the top-right connector between the blue-brown strokes is erroneously detected.  (b) For editing contacts, we highlight the two corresponding c-strokes as the user hovers a \emph{connector}.}
+  \caption[Contact relations.]{ Contact relations (yellow crosses) are represented as connectors in our system. Occlusions can lead to falsely detected contact relations. For example, in (a), the bottom-left connector between the black-brown strokes is detected at a false position, while the top-right connector between the blue-brown strokes is erroneously detected.  (b) For editing contacts, we highlight the two corresponding c-strokes as the user hovers a \emph{connector}.}
   \label{fig:connectors}
 \end{figure}
 
 
-{\emph{(ii) Junctions and hinges.} Our framework assumes that all user strokes are inter-connected and lie on some (planar) canvases, but not all the canvases are necessary aligned with the current reference canvases. We support two types of junction relations to enrich the set of canvases. In particular, we allow for cases when a stroke lies on a canvas forming a junction with a reference canvas, which is orthogonal to a reference canvas passing through a {\em orthogonal junction} (see Figure~\ref{fig:junction_types}a). The other case is the {\em hinge} relation, which means a stroke canvas form a hinge with another stroke canvas (the ladder in Figure~\ref{fig:junction_types}b). We later show how  these two types of junction types handle a large family of shapes in man-made environments.
+%{\emph{(ii) Junctions and hinges.}
+\mypara{Junctions and hinges}
+Our framework assumes that all user strokes are inter-connected and lie on some (planar) canvases, but not all the canvases are necessary aligned with the current reference canvases. We support two types of junction relations to enrich the set of canvases. In particular, we allow for cases when a stroke lies on a canvas forming a junction with a reference canvas, which is orthogonal to a reference canvas passing through a {\em orthogonal junction} (see Figure~\ref{fig:junction_types}a). The other case is the {\em hinge} relation, which means a stroke canvas form a hinge with another stroke canvas (the ladder in Figure~\ref{fig:junction_types}b). We later show how  these two types of junction types handle a large family of shapes in man-made environments.
 
 
 \begin{figure}[b!]
-  \vnudge
+  %\vnudge
   \includegraphics[width=\linewidth]{./images/chapter_5/hinge/hinge}
-  \caption{We allow two types of junction annotations. The first type, {\em orthogonal junction}~(a), indicates that one canvas (red) is orthogonal to an adjacent reference canvas (blue), and passes through the indicated line segment. The second type, {\em hinge} relation~(b), indicates that one canvas (red) forms a rotational angle with a reference canvas (blue), and passes through the indicated line.% as axis.
+  \caption[Junction annotations.]{We allow two types of junction annotations. The first type, {\em orthogonal junction}~(a), indicates that one canvas (red) is orthogonal to an adjacent reference canvas (blue), and passes through the indicated line segment. The second type, {\em hinge} relation~(b), indicates that one canvas (red) forms a rotational angle with a reference canvas (blue), and passes through the indicated line.% as axis.
   }
   \label{fig:junction_types}
 \end{figure}
@@ -140,7 +143,9 @@ Central to our interactive framework is getting user approval for the inferred g
 
 We propose a unified interface to allow the user to annotate such relations. When entering this mode, we highlight all the \emph{connectors} that correspond to a stroke. When the user mouse-overs a specific connector, the corresponding strokes are highlighted (in red and blue respectively, see Figure~\ref{fig:junction_types}) so the user knows which two strokes she is assigning the relation to. The user holds the connector and drags it to a direction to assign the junction hinge.
 
-\emph{(iii) Aided tools}. Ambiguity is a key issue that affects 3D estimations of strokes. When there are many strokes on canvas, it is difficult to pick out the falsely detected connectors as explained earlier. To ease the user operations, we develop a few tools to assist the avoidance of ambiguity. First, we only display connectors formed by new inserted strokes, that is, once the user approves a 3D solution in any stage of his or her sketching, the determined relations will no longer visible unless the user choose so. Second, Photoshop layers is supported in our system. The user can mark any selected strokes as a new layer and continues sketching while unselected strokes fade out. In this case, our system only detects contact relations among the strokes in the current layer. Third, the user can copy and paste any 3D strokes to avoid repetitive drawing. It is preferred by the users as it not only saves sketching time but also offers a more accurate perspective.
+%\emph{(iii) Aided tools}.
+\mypara{Aided tools}
+Ambiguity is a key issue that affects 3D estimations of strokes. When there are many strokes on canvas, it is difficult to pick out the falsely detected connectors as explained earlier. To ease the user operations, we develop a few tools to assist the avoidance of ambiguity. First, we only display connectors formed by new inserted strokes, that is, once the user approves a 3D solution in any stage of his or her sketching, the determined relations will no longer visible unless the user choose so. Second, Photoshop layers is supported in our system. The user can mark any selected strokes as a new layer and continues sketching while unselected strokes fade out. In this case, our system only detects contact relations among the strokes in the current layer. Third, the user can copy and paste any 3D strokes to avoid repetitive drawing. It is preferred by the users as it not only saves sketching time but also offers a more accurate perspective.
 
 
 \section{Multi-stage canvas extraction}
@@ -152,7 +157,7 @@ At a high level, our algorithm consists of few key stages: automatically couplin
 %
 We perform the above steps dynamically in the background, and the reference canvases get augmented as soon the user locks to any suggestions.
 
-We classify  canvases into two main sets and adaptively treat them in the subsequent optimization: one set of canvases $G_1$ are those that are parallel to some initial reference canvases, the other set of canvas $G_2$ that form junction or hinge relations to the canvases in $G_1$ (see also Figure \ref{fig:junction_types}).In progressive sketch, we have additional sets of candidate canvases for new strokes induced from their contacts with determined 3D strokes. If a new stroke has at least two contacts with previously optimized strokes, we estimate each candidate canvas as a plane formed by two lines, one is a line connecting any two such contact points, and the other is the vanishing line of the new stroke. We now explain the steps in details.
+We classify  canvases into two main sets and adaptively treat them in the subsequent optimization: one set of canvases $G_1$ are those that are parallel to some initial reference canvases, the other set of canvas $G_2$ that form junction or hinge relations to the canvases in $G_1$ (see also Figure \ref{fig:junction_types}). In progressive sketch, we have additional sets of candidate canvases for new strokes induced from their contacts with determined 3D strokes. If a new stroke has at least two contacts with previously optimized strokes, we estimate each candidate canvas as a plane formed by two lines, one is a line connecting any two such contact points, and the other is the vanishing line of the new stroke. We now explain the steps in details.
 
 
 
@@ -169,9 +174,9 @@ Further, the user can specify additional planes as reference canvases (e.g., by 
 
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{./images/chapter_5/candidate_planes/candidate_planes.pdf}
-  \caption{We sample candidate canvases for a compound stroke (shown in green) by sweeping across the existing reference canvases. In this example, the stroke contains multiple vanishing directions, and hence multiple sets of candidate planes are sampled. We only show a few of them for visual clarity.}
+  \caption[Sweeping candidate planes.]{We sample candidate canvases for a compound stroke (shown in green) by sweeping across the existing reference canvases. In this example, the stroke contains multiple vanishing directions, and hence multiple sets of candidate planes are sampled. We only show a few of them for visual clarity.}
   \label{fig:candidate_planes}
-  \vnudge
+  %\vnudge
 \end{figure}
 
 
@@ -179,14 +184,14 @@ Further, the user can specify additional planes as reference canvases (e.g., by 
 
 As a key technical enabler, we reformulate the sketch interpretation process as a selection optimization from a set of context-generated canvas planes in order to retrieve a regular arrangement of planes.
 
-\subsubsection{Single stroke}
-
+\mypara{Single stroke}
+%
 Each stroke in $G_1$, i.e., those strokes that are not being specified to form a junction or hinge relation to other strokes, by assumption, should be hosted by a canvas that is parallel to one of the existing reference canvas $r_j \in I$. We first generate a set of candidate canvases for each stroke in $G_1$.
 
 Blindly enumerating all the possible canvases in $I$ by sampling the candidate planes according to the entire set $I$, however, is very expensive. Further, it can lead to degenerate cases (e.g., all strokes lie on the same plane). Hence, as an important observation, we find that most of the strokes are planar and can be broken into sub-strokes that are aligned with the vanishing directions, or alternatively parallel to the edges of canvases in $I$. This observation allows us to filter out those canvases that are obviously unsuitable to be a candidate canvas.
 
-\subsubsection{Compound stroke}
-
+\mypara{Compound stroke}
+%
 For each stroke in $G_1$, our goal is find the canvas in $I$ that best matches the stroke profile. Specifically, for each user stroke $s_i$, we recursively split the strokes into two sub-strokes by the method of Ramer-Douglas-Peucker (RDP). For each splitting, we measure how well the sub-strokes agree with the vanishing lines compared to its original shape. If the average score increases, we stop the splitting. We measure score as a directional angle distance from the line segment to a vanishing point. Specifically, given a vanishing point $\vec{v}$, and a line segment $\vec{pq}$, we define their angle distance as:
 %
 \begin{equation}
@@ -197,8 +202,8 @@ Given the distance function, their angle distance is defined as $\theta(\vec{pq}
 
 
 
-\subsubsection{Stroke-canvas probability assignment}
-
+\mypara{Stroke-canvas probability assignment}
+%
 We now look for candidate canvases for each c-stroke. For a c-stroke $s$, let us denote its sub-strokes as $s = \{{s}^1,{s}^2,\dots, s^n\}$. For each ${s}^k$, we compute its probability of being coincident with a vanishing direction $v_{t,t \in \{x,y,z\}}$, as
 \begin{equation}
 P_t({s}^k \rightarrow \vec{v}_t) = \left\{ \begin{array}{ll}
@@ -217,8 +222,8 @@ Let us denote the sorted list of directions as $\Delta = \{\vec{v}_{1},\vec{v}_{
 
 Given a candidate reference canvas $r_j \in I$ for a stroke $s_i$, we then create the candidate canvases for $s_i$ by sweeping $K = 30$ planes along the $\pm$ normal direction of ${r_i}$. We discard any swept canvas that does not contain any of the stroke point (in the screen space) or the length of projected stroke (in 3{D}) is more than the $10$ times the perimeter of the canvas.
 
-\subsubsection{Non-axis aligned stroke and junctions}
-
+\mypara{Non-axis aligned stroke and junctions}
+%
 The set of strokes in $G_1$ that participate in the labeling process are those
 whose canvases are parallel to some reference canvas $r_i$. We include the set of strokes that shares \emph{orthogonal junction} relations to the strokes in $G_1$ in the labeling. Note that unlike strokes with hinge relations, orthogonal junction-tagged strokes can form connection with multiple strokes in $G_1$, i.e., strokes in $G_1$ could also depend on them. Hence, we have to solve them together with strokes in $G_1$. For other types of strokes, we solve them separately.
 
@@ -265,9 +270,9 @@ where, $s_i'$ and $s_j'$ are the embedded strokes in $\Re^3$; $\gamma(s_l',\vart
 
 \begin{figure}%[t!]
   \includegraphics[width=\linewidth]{./images/chapter_5/optimization/optimization.pdf}
-  \caption{We lift the 2D sketch lines~(a), (b) to 3D via extracted embedding canvas planes as a selection problem that simultaneously solves for embedding planes for the stokes from a set of candidate canvas with the best canvas preferring a regular arrangement that agrees with $\Upsilon$~(c). The selected canvases are then refined by a quadratic programming that minimizes the contacts distance while complying with user annotated constraints~(d). }
+  \caption[Canvas optimization.]{We lift the 2D sketch lines~(a), (b) to 3D via extracted embedding canvas planes as a selection problem that simultaneously solves for embedding planes for the stokes from a set of candidate canvas with the best canvas preferring a regular arrangement that agrees with $\Upsilon$~(c). The selected canvases are then refined by a quadratic programming that minimizes the contacts distance while complying with user annotated constraints~(d). }
   \label{fig:optimization}
-  \vnudge
+  %\vnudge
 \end{figure}
 
 \subsection{Dynamic Interpretation}
@@ -286,9 +291,9 @@ Here, $\vec{v}_{s_i}$ is the direction of the canvas of $s_i$ and $f(\dots | a_i
 
 
 \begin{figure}[t!]
-  \vnudge
+  %\vnudge
   \includegraphics[width=\linewidth]{./images/chapter_5/user_study/adaptive_sketch.pdf}
-  \caption{Our system supports incremental design exploration. The user can add contents progressively and iteratively in a way that she could revisit any stage of previous design. Here a line drawing of a city view is adaptively anchored into 3{D}. The original drawings are from a children's book illustrator.
+  \caption[Adaptive sketch design.]{Our system supports incremental design exploration. The user can add contents progressively and iteratively in a way that she could revisit any stage of previous design. Here a line drawing of a city view is adaptively anchored into 3{D}. The original drawings are from a children's book illustrator.
   \label{fig:adaptive_sketch}
   }
 \end{figure}
@@ -314,9 +319,9 @@ We support another style of rendering using mapped textures. Since our input are
 
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{./images/chapter_5/transfer/transfer.pdf}
-  \caption{Our system supports designing in context. The user can easily create 3{D} abstractions from existing images, or redesign and transfer them into new contexts. Both the source and target scene configurations in 3{D} are rectified seamlessly. We used an airbrush interface for 3{D} painting on the extracted canvases.
+  \caption[Context transfer.]{Our system supports designing in context. The user can easily create 3{D} abstractions from existing images, or redesign and transfer them into new contexts. Both the source and target scene configurations in 3{D} are rectified seamlessly. We used an airbrush interface for 3{D} painting on the extracted canvases.
   \label{fig:transfer}
-  \vnudge
+  %\vnudge
   }
 \end{figure}
 
@@ -329,9 +334,9 @@ We evaluate our sketching system by comparing with ground-truth models and previ
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{./images/chapter_5/sketchup/sketchup_eval}
   %\vspace{1in}
-  \caption{Evaluation of our algorithm against 3D ground truth. Inset images in the left column are sketches contouring the screenshot of 3{D} models. The right column shows our reconstructed results (cyan) overlaid with original model (shown in orange).}
+  \caption[Evaluation of our algorithm against 3D ground truth.]{Evaluation of our algorithm against 3D ground truth. Inset images in the left column are sketches contouring the screenshot of 3{D} models. The right column shows our reconstructed results (cyan) overlaid with original model (shown in orange).}
   \label{fig:sketchupEval}
-  \vnudge
+  %\vnudge
 \end{figure}
 
 
@@ -349,11 +354,11 @@ In our experience, the main source of error is incorrect connectors.% However, s
   \centering
   \includegraphics[width=\linewidth]{./images/chapter_5/evaluations/eval_strokes}
   %\vspace{1in}
-  \caption{Our algorithm is tolerant to variations in user sketches. Style 1 (a) uses straight lines, while style 2 (b) uses freehand strokes. The two output canvas abstractions are visually and structurally similar compared to each other, as well as the original model~(middle and right subfigures).
+  \caption[Our algorithm is tolerant to variations in user sketches.]{Our algorithm is tolerant to variations in user sketches. Style 1 (a) uses straight lines, while style 2 (b) uses freehand strokes. The two output canvas abstractions are visually and structurally similar compared to each other, as well as the original model~(middle and right subfigures).
   %The final abstractions can be influenced by the actual contact positions among the sketched strokes.
   }
   \label{fig:strokes_eval}
-  \vnudge
+  %\vnudge
 \end{figure}
 
 \subsection{Sketch statistics} It is interesting to see that artists usually only use sketch and erase tools as they draw on paper. They try to avoid the ambiguity by changing viewpoints and then sketching. Even without any annotations, our system can still create good results approximating 3D structures, see Figure \ref{fig:teaser}, \ref{fig:design_sketches}. Table~\ref{tbl:statistics} presents the number of strokes, the number of connectors, user annotations, and the average modeling time for the various examples shown in the paper. The majority of the time was spent on sketching using mouse as input. We tried a version using digital pen input, however, the interface is still indirect (the user needs to touch on a separate pad to get the mouse correctly positioned on screen).
@@ -389,17 +394,20 @@ As a side application, we can use the system to obtain a crude 3D model of man-m
 
 \begin{figure}
   \includegraphics[width=\linewidth]{./images/chapter_5/comparison/comparison.pdf}
-  \caption{Applying our method to images collected from an interactive system~\protect\cite{Sinha:2008:IAM} and a learning-based approach~\protect\cite{SaxenaSN09}. Our method achieves a good quality abstraction of the original scene with only a few user strokes and annotations.
+  \caption[Comparison to existed work.]{Applying our method to images collected from an interactive system~\protect\cite{Sinha:2008:IAM} and a learning-based approach~\protect\cite{SaxenaSN09}. Our method achieves a good quality abstraction of the original scene with only a few user strokes and annotations.
   \label{fig:comparison}
   }
-  \vnudge
+  %\vnudge
 \end{figure}
 
 
 
 \section{User experience}
 
-{Design reflections}
+We had a about 10 casual volunteers experiment with the system. Figure \ref{fig:results} shows some examples created by this user group. Each of them took about 2-3 hours to get familiar with the system and then complete their first sketch. A majority of them, many of whom have a computer graphics/vision background, preferred to calibrate the camera themselves so that they could have a better idea of the perspective during sketching. They liked the guidelines of vanishing directions and the aids for correcting perspective, as sketching with an accurate perspective is otherwise difficult for non-artists.
+%
+In all of these cases, the background image was used to generate a coordinate system to anchor the sketch.
+
 In the most critical evaluation of our system, we worked with three well-known practitioners to get feedback on our system.
 %
 %
@@ -416,22 +424,24 @@ He felt that the tool will be particularly useful in ``discussing designs with c
 
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{images/chapter_5/teaser/teaser.pdf}
-   \caption{Using a background photograph for anchoring, a practicing architect used our system to progressively develop a design.
+   \caption[A complete design.]{Using a background photograph for anchoring, a practicing architect used our system to progressively develop a design.
     In the background, our algorithm lifts the sketched strokes along with their intersections to 3D using a novel context-based canvas arrangement extraction algorithm. The discovered canvases are painted and used for 3D-like interactions to facilitate preparatory design previews~(right)}
    \label{fig:teaser}
-   \vnudge
+   %\vnudge
+\end{figure}
+
+\begin{figure}[t!]
+  %\vnudge
+  \includegraphics[width=\linewidth]{./images/chapter_5/user_study/user_study.pdf}
+  \caption[User study.]{Applying our algorithm to sketches drawn by professional architect, designer, and college student.
+  \label{fig:design_sketches}
+  }
 \end{figure}
 
 
 Our next user is a designer.  His sketching style primarily employed planar curves on paper, see Figure~\ref{fig:design_sketches}(a), that we scanned into the drawing system. He appreciated that he could continue to simply sketch, though he was initially worried that he would need to draw in correct perspective. We demonstrated that he could use the system to alter the viewpoint.
 
-\begin{figure}%[t!]
-  \vnudge
-  \includegraphics[width=\linewidth]{./images/chapter_5/user_study/user_study.pdf}
-  \caption{Applying our algorithm to sketches drawn by professional architect, designer, and college student.
-  \label{fig:design_sketches}
-  }
-\end{figure}
+
 
 
 Finally, our third user is a children's book illustrator, who frequently creates interactive scenes (see Figure~\ref{fig:adaptive_sketch}). She used our system to get previews of her sketches, perform view perturbations, and further develop her drawings. She appreciated the ability to quickly ``navigate in 3D'' as she was drawing and to experience the scene in a more spatial way than paper would allow. She noted, ``After working in this system, it will be hard to go back to 2D.''
@@ -439,9 +449,6 @@ Finally, our third user is a children's book illustrator, who frequently creates
 
 Note that the \textsc{SmartCanvas} interface was updated twice based on initial feedback from the first user (that is, the architect).  For larger scale evaluation, the project code/demo will be made publicly available.
 
-We also had a about 10 casual volunteers experiment with the system. Figure \ref{fig:results} shows some examples created by this user group. Each of them took about 2-3 hours to get familiar with the system and then complete their first sketch. A majority of them, many of whom have a computer graphics/vision background, preferred to calibrate the camera themselves so that they could have a better idea of the perspective during sketching. They liked the guidelines of vanishing directions and the aids for correcting perspective, as sketching with an accurate perspective is otherwise difficult for non-artists.
-%
-In all of these cases, the background image was used to generate a coordinate system to anchor the sketch.
 
 
 
@@ -451,6 +458,6 @@ In all of these cases, the background image was used to generate a coordinate sy
   \includegraphics[width=\linewidth]{./images/chapter_5/results/results.pdf}
   \caption{Extracted canvases using our algorithm when applied to various sketches, images, design drawings.
   \label{fig:results}
-  \vnudge
+  %\vnudge
   }
 \end{figure*}

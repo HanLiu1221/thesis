@@ -4,7 +4,7 @@
 \chapter{Constraint-aware interior layout exploration}
 \label{chapter3}
 
-Interior layout design refers to the task of arranging input rooms in a given envelop under design constraints. Usually a designer sketches out a layout considering user requirements in the allocation of room space and connectivity. Computer aided floor plan design has been widely studied in the context of automatic space planning, typically, it starts from a design graph that reflects users' intentions and then produces an optimal layout satisfying given constraints. Besides of design guidelines in the scales and adjacency of room, fabrication constraints also matters so as to ease manufacturing. Precast concrete as a popular construction method has an advantage in utilizing reusable molds (i.e., concrete panels) for assembling buildings. In real world construction, the panels are sliced or drilled to fit walls, windows and doors as shown in Figure~\ref{fig:realCast}. In this chapter, we introduce an interactive tool supporting modifications of user designs and dynamically adjusting the computed model, conforming to the geometric and topological specifications, as well as reducing the costs in precast buildings.
+Interior layout design refers to the task of arranging input rooms in a given envelop under design constraints. Usually a designer sketches out a layout considering user requirements in the allocation of room space and connectivity. Computer aided floor plan design has been widely studied in the context of automatic space planning, typically, it starts from a design graph that reflects users' intentions and then produces an optimal layout satisfying given constraints. Besides of design guidelines in the scales and adjacency of room, fabrication constraints also matter so as to ease manufacturing. Precast concrete as a popular construction method has an advantage in utilizing reusable molds (i.e., concrete panels) for assembling buildings. In real world construction, the panels are sliced or drilled to fit walls, windows and doors as shown in Figure~\ref{fig:realCast}. In this chapter, we introduce an interactive tool supporting modifications of user designs and dynamically adjusting the computed model, conforming to the geometric and topological specifications, as well as reducing the costs in precast buildings.
 
 \section{Chapter layout}
 
@@ -35,7 +35,7 @@ This chapter is organized following the modeling steps:
     \includegraphics[width=0.4\linewidth]{./images/chapter_3/intro/layout_01.png}
     \label{intro:(d)}
 }
-\caption{Interactive floor plan generation by our system based on constrained optimization and precast concrete based construction cost minimization. Concrete slabs that were cut are highlighted in red. }
+\caption[Interactive floor plan generation.]{Interactive floor plan generation by our system based on constrained optimization and precast concrete based construction cost minimization. Concrete slabs that were cut are highlighted in red. }
 \label{fig:intro}
 %\vspace{-.1in}
 \end{figure*}
@@ -86,10 +86,10 @@ After presenting the initial layout, users are allowed to interactively manipula
 
 Unlike most existing approaches that search for an optimal layout or provide users several suggestions, we allow the user to evaluate and refine the suggested floor plan. Our system responds with corresponding changes conforming to the predefined constraints. We support two types of interactions to change room shapes and locations.
 
-\mypara{(i) Moving wall segments.}
+\mypara{Moving wall segments}
 The basic elements of a layout are its room shapes and locations. To assist the user in the layout exploration within the outline region $R$, we present the layout as a collection of wall segments that split the region into different rooms. The user can drag wall segments along their normals to update the area of incident rooms (see the highlighted wall in Figure~\ref{fig:interaction:(a)}). More specifically, suppose an inner wall segment $\omega_i$ is shared by two rooms $r_1$ and $r_2$ with respective areas $a_1$ and $a_2$, the trajectory of $\omega_i$ is a rectangular area measured by $\alpha_i$, then the new room areas will be $a_1' \leftarrow a_1 \pm \alpha_i$ and $a_2' \leftarrow a_2 \mp \alpha_i$. This can result in a unbalanced layout if the walls are moved arbitrarily. Therefore, in a subsequent optimization, we adjust the room locations and areas according to several quality measurements and validate the topology of the whole layout.
 
-\mypara{(ii) Swapping rooms.}
+\mypara{Swapping rooms}
 We also provide the user with additional design freedom to swap rooms. Note that such a manipulation (i.e., swapping of room ids) only leads to position exchange, while the expected room areas remain unchanged. Hence, subsequently local adjustments are made via optimization to get the rooms closer to the predefined sizes. To overcome the connectivity violation due to room swaps, we restore connections by laying doors or open walls, through searching neighboring room spaces during a post processing step.
 
 \subsection{Layout optimization}
@@ -123,7 +123,7 @@ After generating an initial layout, all the wall segments become candidate eleme
     \includegraphics[width=0.5\linewidth]{./images/chapter_3/cost_function/layout01_optim_cast.pdf}
     \label{fig:costFunc:(e)}
 }
-\caption{The effect of individual terms in the cost function for layout optimization. To highlight the precast concrete term, we also show the layout with different types of concretes.}
+\caption[The effect of individual terms in the cost function.]{The effect of individual terms in the cost function for layout optimization. To highlight the precast concrete term, we also show the layout with different types of concretes.}
 \label{fig:costFunc}
 \vspace{-.1in}
 \end{figure*}
@@ -230,7 +230,7 @@ An overlapping region is merged to one of the incident rooms that retains regula
     \includegraphics[width=0.45\linewidth]{./images/chapter_3/optimization/Layout_03_result_room.pdf}
     \label{fig:interaction:(f)}
 }
-\caption{Layout optimization via abstracted rectangular proxies, followed by layout regeneration and validation.}
+\caption[Layout optimization.]{Layout optimization via abstracted rectangular proxies, followed by layout regeneration and validation.}
 \label{fig:interaction}
 \vspace{-.1in}
 \end{figure}
@@ -250,7 +250,7 @@ We ignore the thickness of the wall segments in the layout optimization. In real
 \begin{figure}[t!]
 \centering
 \includegraphics[width=.9\linewidth]{./images/chapter_3/variations/variation_Cast.pdf}
-\caption{Starting from a single layout~(left), the user can create multiple design variations (middle-left, middle-right, right), while the system ensures that the variations respect the prescribed constraints.}
+\caption[Design variations of a single floor plan.]{Starting from a single layout~(left), the user can create multiple design variations (middle-left, middle-right, right), while the system ensures that the variations respect the prescribed constraints.}
 \label{variations}
 \vspace{-.1in}
 \end{figure}
@@ -259,9 +259,8 @@ We ignore the thickness of the wall segments in the layout optimization. In real
 
 In order to calculate the optimal combination of concretes leading to the minimal change requirement of the layer, we use dynamic programming to solve a classical Knapsack problem~\cite{gary1979computers}.
 
-\subsubsection{Single wall}
-
-Take the layer with size $s_1$ as an example, the goal is to fill it with given smaller concrete slabs of widths $w_1$, $w_2$, and $w_3$.Having obtained the optimal numbers of precast concretes with different types, we compute the error between the sum of their widths $s_w$ and $s_1$ and minimize it. Here $s_w = n_1 \times w_1 + n_2 \times w_2 + n_3 \times w_3$ $(n_1, n_2, n_3 \geq 0)$. After that, $s_1$ is updated to $s_w$ and $s_2$ is similarly updated.
+\mypara{Single wall}
+Take the layer with size $s_1$ as an example, the goal is to fill it with given smaller concrete slabs of widths $w_1$, $w_2$, and $w_3$. Having obtained the optimal numbers of precast concretes with different types, we compute the error between the sum of their widths $s_w$ and $s_1$ and minimize it. Here $s_w = n_1 \times w_1 + n_2 \times w_2 + n_3 \times w_3$ $(n_1, n_2, n_3 \geq 0)$. After that, $s_1$ is updated to $s_w$ and $s_2$ is similarly updated.
 
 Although it seems the two layers of a wall segment can be cast with the same solution, the two layer sizes are actually different. A wall segment can have one, two, or three neighboring walls, which can be observed from the updated layout in Figure~\ref{walltype}. We model four types of wall segments to facilitate concrete casting for the corresponding layers.
 
@@ -269,13 +268,12 @@ Although it seems the two layers of a wall segment can be cast with the same sol
 \centering
 \includegraphics[width=0.4\linewidth]{./images/chapter_3/walltype/Layout_01_walltype.pdf}
 \includegraphics[width=0.35\linewidth]{./images/chapter_3/walltype/Layout_01_walltype_list.pdf}
-\caption{The floor plan layout is updated to have certain thickness of each wall segment for casting concretes (left). Four types of wall segments with different layer configurations (right).}
+\caption[Wall types.]{The floor plan layout is updated to have certain thickness of each wall segment for casting concretes (left). Four types of wall segments with different layer configurations (right).}
 \label{walltype}
 \vspace{-.1in}
 \end{figure}
 
-\subsubsection{Wall with doors or windows}
-
+\mypara{Wall with doors or windows}
 The wall segments with doors or windows need special treatment. For a given layer, we first cast the area above/below a door or a window using specialized concretes. Here, we assume all the doors have the same size, so as the windows. We solve the rest of the parts separately as presented before. Note although a global optimization can alternately be used, we preferred this greedy approach for interactive speed.
 
 \begin{figure}[t!]
@@ -300,12 +298,11 @@ The wall segments with doors or windows need special treatment. For a given laye
     \includegraphics[width=0.45\linewidth]{./images/chapter_3/precast/Layout_02_floor0_with_optim.pdf}
     \label{precast:(c)}
 }
-\caption{Our system can significantly reduce the number of cuts for precast concretes by making small layout adjustment on the wall segments as shown in bottom-right versus the unoptimized solution shown on bottom-left.}
+\caption[The reduction of concrete cuts.]{Our system can significantly reduce the number of cuts for precast concretes by making small layout adjustment on the wall segments as shown in bottom-right versus the unoptimized solution shown on bottom-left.}
 \label{precast}
 \end{figure}
 
-\subsubsection{Wall traverse}
-
+\mypara{Wall traverse}
 After the two layers of a single wall are updated, we propagate the change to the layers of neighboring wall segments so that the orthogonality and collinearity between wall segments are preserved. We also have a flag for each wall segment so that the size of its layer is only updated once to avoid conflicts.
 
 Finally, during the concrete casting, two neighboring collinear layers are preferably combined into a longer one, if applicable, since it helps to save unnecessary cuts during casting optimization. Figure~\ref{precast} shows a concrete casting result for a floor plan layout of a single story. Note that although the layout does not change significantly, the number of cuts is significantly reduced.
@@ -336,7 +333,6 @@ For multi-storied buildings, we simply apply the above concrete casting algorith
 \includegraphics[width=0.99\linewidth]{./images/chapter_3/models/model_02.png}
 \label{models:(d)}
 }
-\caption{A floor plan layout generation for multi-storied buildings.}
+\caption[Multiple floor plan generation.]{A floor plan layout generation for multi-storied buildings.}
 \label{fig:two-story}
 \end{figure}
-
